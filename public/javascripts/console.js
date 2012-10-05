@@ -1,32 +1,26 @@
-var Console = function() {
-  this.construct.apply(this, arguments)
-}
-
-Console.prototype = {
-  RETURN: 13,
-  UP:     38,
-  DOWN:   40,
-
-  bindings: {},
+var Console = Backbone.View.extend({
+  keys: {
+    return: 13,
+    up:     38,
+    down:   40,
+  },
 
   history: [],
 
-  construct: function(el) {
-    _.bindAll(this, 'execute', 'historyNext', 'historyPrev', 'handleEvent', 'sizeInput', 'focus');
-    this.on(this.RETURN, this.execute);
-    this.on(this.UP, this.historyPrev);
-    this.on(this.DOWN, this.historyNext);
-    this.el = el;
-    this.input = this.el.find('input')
-    this.input.on('keypress', this.handleEvent);
-    this.el.click(this.focus);
-    $(window).on('resize', this.sizeInput);
-    this.sizeInput();
-    this.resetHistoryPointer();
+  events: {
+    'keypress input': 'handleEvent',
+    'click':          'focus',
   },
 
-  on: function(key, cb) {
-    this.bindings[key] = cb;
+  initialize: function() {
+    _.bindAll(this, 'execute', 'historyNext', 'historyPrev', 'handleEvent', 'sizeInput', 'focus');
+    this.on('return', this.execute);
+    this.on('up', this.historyPrev);
+    this.on('down', this.historyNext);
+    this.input = this.$el.find('input')
+    this.resetHistoryPointer();
+    this.sizeInput();
+    $(window).on('resize', this.sizeInput);
   },
 
   historyPrev: function() {
@@ -48,7 +42,7 @@ Console.prototype = {
       this.addMessage(val);
       this.input.val('');
       this.resetHistoryPointer();
-      this.el.scrollTop(100000000);
+      this.$el.scrollTop(100000000);
     }
   },
 
@@ -56,7 +50,7 @@ Console.prototype = {
     var message = $('<div>', {class: 'message'});
     message.append($('<span>', {class: 'nick', html: 'tim'}));
     message.append($('<span>', {class: 'text', html: text}));
-    message.insertBefore(this.el.find('.command'));
+    message.insertBefore(this.$el.find('.command'));
   },
 
   resetHistoryPointer: function() {
@@ -70,24 +64,24 @@ Console.prototype = {
 
   handleEvent: function(e) {
     var b;
-    if(b = this.bindings[e.keyCode]) {
+    if(_.chain(this.keys).values().contains(e.keyCode).value()) {
       e.preventDefault();
-      b();
+      this.trigger(_.invert(this.keys)[e.keyCode], e);
     }
   },
 
   sizeInput: function() {
-    var width = this.el.width();
-    var promptWidth = this.el.find('.prompt').width();
+    var width = this.$el.width();
+    var promptWidth = this.$el.find('.prompt').width();
     this.input.width(width - 20 - promptWidth - 8);
   },
 
   focus: function() {
     this.input[0].focus();
   }
-};
+});
 
 $(function() {
-  var console = new Console($('.chat-container'));
+  var console = new Console({el: $('.chat-container')});
   console.focus();
 });
