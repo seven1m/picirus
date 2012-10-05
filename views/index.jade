@@ -1,5 +1,9 @@
 extends layout
 
+block scripts
+  != css('console')
+  != js('console')
+
 block content
   .chat-container
     .chat
@@ -7,5 +11,7 @@ block content
         span.nick tim
         span.text my message
       .command
-        span.prompt &gt;
+        span.prompt
+         = user ? user.username : null
+         | @websh:~&gt;
         input(autocomplete='off')

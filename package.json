@@ -7,9 +7,12 @@
   },
   "dependencies": {
     "express": "3.0.x",
+    "connect-flash": "0.1.x",
     "jade": "0.27.x",
     "connect-assets": "2.3.x",
     "coffee-script": "1.3.x",
-    "stylus": "0.29.x"
+    "stylus": "0.29.x",
+    "passport": "0.1.x",
+    "passport-local": "0.1.x"
   }
 }

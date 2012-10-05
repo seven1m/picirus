@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  if message
+    p
+      em= message
+  form(action='/login', method='post')
+    .row
+      label(for='username') Username:
+      input(type='text', name='username', id='username')
+      br
+    .row
+      label(for='password') Password:
+      input(type='password', name='password', id='password')
+    .row
+      input(type='submit', value='Log In')
