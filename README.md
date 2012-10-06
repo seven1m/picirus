@@ -4,13 +4,33 @@ an extensible command line for the web
 
 ## Features
 
-*core features:*
-
 * user accounts
 * commands for navigating the web
 * custom aliases
-* dropbox integration
+* redirection
+  * view a file
+  * copy a file from one location/service to another
+  * post a link to a file
 
-*addons:*
+*integration:*
 
-* chat: irc, xmpp
+* dropbox
+* gmail
+* irc and xmpp
+* flickr
+* twitter
+* pinboard
+* gist
+* github
+* filepicker.io
+
+## Examples
+
+*working with files:*
+
+* from gmail to dropbox
+* from gmail to flickr
+* from flickr to dropbox
+* publish a file to s3 with expiration, then share a link via email, irc, etc.
+* publish a file to dropbox, then share a link via email, irc, etc.
+* etc.
