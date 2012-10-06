@@ -14,10 +14,13 @@ class Console extends Backbone.View
     'keypress input': 'handleEvent'
     'click':          'focus'
 
+  key_events:
+    return: 'execute'
+    up:     'historyPrev'
+    down:   'historyNext'
+
   initialize: ->
-    @on 'return', @execute
-    @on 'up', @historyPrev
-    @on 'down', @historyNext
+    @on(key, @[fn]) for key, fn of @key_events
     @input = @$el.find('input')
     @resetHistoryPointer()
     @sizeInput()
