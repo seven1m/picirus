@@ -5,6 +5,8 @@ block scripts
   != js('console')
 
 block content
+  nav
+    include _browserid
   .chat-container
     .chat
       .message
@@ -12,6 +14,6 @@ block content
         span.text my message
       .command
         span.prompt
-         = user ? user.username : null
+         = user ? user.username : 'guest'
          | @websh:~&gt;
         input(autocomplete='off')

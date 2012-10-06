@@ -34,24 +34,11 @@ app.configure 'development', ->
 app.get '/', (req, res) ->
   res.render 'index', user: req.user
 
-app.get '/signup', (req, res) ->
-  res.render 'signup'
-
-app.post '/signup', (req, res) ->
-  # TODO
-
-app.get '/login', (req, res) ->
-  res.render 'login'
-
-app.post '/auth',
-  passport.authenticate 'local',
-    successRedirect: '/'
-    failureRedirect: '/login'
-    failureFlash: true
-    badRequestMessage: 'Please enter a username and password.'
+app.get '/login-failure', (req, res) ->
+  res.render 'login-failure'
 
 app.post '/auth/browserid',
-  passport.authenticate('browserid', failureRedirect: '/login'),
+  passport.authenticate('browserid', failureRedirect: '/login-failure'),
   (req, res) ->
     res.redirect('/')
 
