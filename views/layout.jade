@@ -7,4 +7,6 @@ html
     script(src='https://browserid.org/include.js')
     block scripts
   body
+    if flash('error')
+      .error= flash('error')
     block content

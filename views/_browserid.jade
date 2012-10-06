@@ -1,0 +1,7 @@
+form(action='/auth/browserid', method='post', style='display:none;')
+  input(type='text', name='assertion')
+
+a#browserid(href='#')
+  img(src='https://browserid.org/i/sign_in_red.png')
+
+!= js('browserid')
