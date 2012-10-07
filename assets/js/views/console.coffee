@@ -27,6 +27,7 @@ class app.views.Console extends Backbone.View
       @history.add val
       @addMessage val
       @input.val ''
+      @updatePrompt()
       @history.reset()
       @$el.scrollTop(100000000)
 
@@ -54,6 +55,7 @@ class app.views.Console extends Backbone.View
       bodyHeight = $('body').height()
       headerHeight = $('header').outerHeight(true)
       @$el.height bodyHeight - headerHeight
+    @updatePrompt()
 
   updatePrompt: =>
     @prompt = "#{@username}@#{@context}:#{@path}&gt;"
@@ -69,7 +71,6 @@ class app.views.Console extends Backbone.View
     @$el.html jade.render('console', prompt: 'guest')
     @input = @$el.find('input')
     @content = @$el.find('.content')
-    @updatePrompt()
     @resize()
     $(window).on 'resize', _.debounce(@resize, 50)
     @
