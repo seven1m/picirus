@@ -3,6 +3,7 @@ http = require('http')
 path = require('path')
 mongoose = require('mongoose')
 passport = require('passport')
+jade_browser = require('jade-browser')
 auth = require(__dirname + '/auth')
 models = require(__dirname + '/models')
 helpers = require(__dirname + '/helpers')
@@ -27,6 +28,7 @@ app.configure ->
   app.use app.router
   app.use express.static(path.join(__dirname, 'public'))
   app.use require('connect-assets')()
+  app.use jade_browser('/js/templates.js', '**/*.jade', root: __dirname + '/assets/js/templates')
 
 app.configure 'development', ->
   app.use express.errorHandler()

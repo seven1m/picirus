@@ -17,6 +17,7 @@
     "passport-browserid": "0.1.x",
     "mongoose": "3.2.x",
     "bcrypt": "0.7.x",
-    "underscore": "1.4.x"
+    "underscore": "1.4.x",
+    "jade-browser": "0.0.x"
   }
 }

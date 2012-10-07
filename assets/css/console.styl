@@ -1,3 +1,25 @@
+console-bg = #073642
+header-bg  = #002b36
+default-fg = #93a1a1
+input-fg   = #93a1a1
+prompt-fg  = #b58900
+header-fg  = #2aa198
+nick-fg    = #2aa198
+
+/*
+base01  = #586e75
+base00  = #657b83
+base0   = #839496
+base2   = #eee8d5
+base3   = #fdf6e3
+orange  = #cb4b16
+red     = #dc322f
+magenta = #d33682
+violet  = #6c71c4
+blue    = #268bd2
+green   = #859900
+*/
+
 html, body
   height 100%
   margin 0
@@ -5,33 +27,37 @@ html, body
 
 body
   font 14px "PT Mono", monospace
-  background-color #073642
-  color #93a1a1
+  background-color console-bg
+  color default-fg
 
-nav
-  float right
-  padding 5px 5px 0 0
+header
+  background-color header-bg
+  padding 5px 10px
+  overflow auto
+  h1
+    font-size 14pt
+    color header-fg
+    padding 0
+    margin 0
+  nav
+    float right
 
-.chat-container
-  height 100%
+.console
   margin 0
   overflow auto
-
-.chat
-  padding 10px
-
-.command .prompt
-  color #b58900
-  margin-right 8px
-
-input
-  border none
-  background-color transparent
-  font 14px "PT Mono", monospace
-  color #93a1a1
+  .content
+    padding 10px
+  .command
+    .prompt
+      color prompt-fg
+      margin-right 8px
+    input
+      border none
+      background-color transparent
+      font 14px "PT Mono", monospace
+      color input-fg
 
 .nick
-  color #2aa198
-
-.nick:after
-  content " "
+  color nick-fg
+  &:after
+    content " "

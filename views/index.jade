@@ -2,18 +2,12 @@ extends layout
 
 block scripts
   != css('console')
-  != js('console')
+  != js('main')
+  script(src='/js/templates.js')
 
 block content
-  nav
-    include _browserid
-  .chat-container
-    .chat
-      .message
-        span.nick tim
-        span.text my message
-      .command
-        span.prompt
-         = user ? user.username : 'guest'
-         | @websh:~&gt;
-        input(autocomplete='off')
+  header
+    nav
+      include _browserid
+    h1 WEBSH
+  .console.full
