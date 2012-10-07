@@ -7,6 +7,12 @@ html
     script(src='https://browserid.org/include.js')
     block scripts
   body
+    header
+      nav
+        include _browserid
+      h1 WEBSH
+      | 
+      span.tagline command the web
     if flash('error')
       .error= flash('error')
     block content
