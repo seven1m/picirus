@@ -21,7 +21,7 @@ app.configure ->
   app.use express.bodyParser()
   app.use express.methodOverride()
   app.use express.cookieParser("Never send a human to do a machine's job.")
-  app.use express.session(cookie: maxAge: 60000)
+  app.use express.cookieSession()
   app.use passport.initialize()
   app.use passport.session()
   app.use require('connect-flash')()
