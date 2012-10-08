@@ -3,9 +3,9 @@
 
 class EchoPlugin
 
-  constructor: (@session) ->
-    @session.on '**', (command, cb) ->
-      command.output = command.input # TODO append output?
-      command.save cb
+  name: 'echo'
+
+  process: (command, next) =>
+    next output: command.input
 
 module.exports = EchoPlugin
