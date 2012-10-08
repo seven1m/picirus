@@ -20,30 +20,29 @@ class app.views.Console extends Backbone.View
 
   initialize: ->
     @on(key, @[fn]) for key, fn of @key_events
-    @history = new app.models.History
+    @history = new app.collections.History
+    @history.on 'change', (command) =>
+      $('#' + command.cid).find('.text').html command.get('output')
 
   execute: =>
     if val = @input.val()
-      @history.add val
-      @addMessage val
+      command = @history.create input: val
+      @addOutput command
       @input.val ''
       @updatePrompt()
-      @history.reset()
+      @history.resetPointer()
       @$el.scrollTop(100000000)
 
   historyPrev: =>
-    @history.prev()
-    @input.val @history.current()
+    @input.val @history.prev()?.get('input')
 
   historyNext: =>
-    @history.next()
-    @input.val @history.current()
+    @input.val @history.next()?.get('input')
 
-  addMessage: (text) =>
-    message = $('<div>', class: 'message')
-    message.append $('<span>', {class: 'nick', html: 'tim'})
-    message.append $('<span>', {class: 'text', html: text})
-    message.insertBefore @$el.find('.command')
+  addOutput: (command) =>
+    $('<div>', id: command.cid)
+      .append($('<span>', class: 'text', html: command.get('output')))
+      .appendTo(@output)
 
   handleEvent: (e) =>
     if e.keyCode in _(@keys).values()
@@ -71,6 +70,7 @@ class app.views.Console extends Backbone.View
     @$el.html jade.render('console', prompt: 'guest')
     @input = @$el.find('input')
     @content = @$el.find('.content')
+    @output = @content.find('.output')
     @resize()
     $(window).on 'resize', _.debounce(@resize, 50)
     @

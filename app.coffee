@@ -11,6 +11,7 @@ helpers = require(__dirname + '/helpers')
 mongoose.connect 'localhost', 'websh'
 
 app = express()
+server = http.createServer(app)
 
 app.configure ->
   app.set 'port', process.env.PORT || 3000
@@ -44,5 +45,7 @@ app.post '/auth/browserid',
   (req, res) ->
     res.redirect('/')
 
-http.createServer(app).listen app.get('port'), ->
+require(__dirname + '/sync')(server)
+
+server.listen app.get('port'), ->
   console.log("Express server listening on port " + app.get('port'))

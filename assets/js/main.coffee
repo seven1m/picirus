@@ -1,9 +1,12 @@
 #= require underscore
 #= require backbone
 #= require app
-#= require models/history
+#= require lib/sync
+#= require models/command
+#= require collections/history
 #= require views/console
 
 $ ->
+  Backbone.socket = io.connect()
   app.console = new app.views.Console(el: $('.console')).render()
   app.console.focus()
