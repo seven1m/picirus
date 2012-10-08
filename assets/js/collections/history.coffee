@@ -22,8 +22,7 @@ class app.collections.History extends Backbone.Collection
     @pointer = -1
 
   checkBounds: =>
-    len = @length
     if @pointer < 0
-      @pointer = len - 1
-    else if @pointer >= len
+      @pointer = @length - 1
+    else if @pointer >= @length
       @pointer = 0
