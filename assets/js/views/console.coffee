@@ -56,6 +56,10 @@ class app.views.Console extends Backbone.View
       @$el.height bodyHeight - headerHeight
     @updatePrompt()
 
+  setUsername: (username) =>
+    @username = username
+    @updatePrompt()
+
   updatePrompt: =>
     @prompt = "#{@username}@#{@context}:#{@path}&gt;"
     @$el.find('.prompt').html @prompt

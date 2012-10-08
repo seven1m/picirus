@@ -35,7 +35,7 @@ app.configure 'development', ->
   app.use express.errorHandler()
 
 app.get '/', (req, res) ->
-  res.render 'index', user: req.user
+  res.render 'index'
 
 app.get '/login-failure', (req, res) ->
   res.render 'login-failure'
@@ -43,7 +43,9 @@ app.get '/login-failure', (req, res) ->
 app.post '/auth/browserid',
   passport.authenticate('browserid', failureRedirect: '/login-failure'),
   (req, res) ->
-    res.redirect('/')
+    res.json
+      status: 'success'
+      username: req.user.username
 
 require(__dirname + '/sync')(server)
 
