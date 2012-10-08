@@ -19,6 +19,7 @@ class app.views.Console extends Backbone.View
     down:   'historyNext'
 
   initialize: ->
+    @username = @options.username if @options.username
     @on(key, @[fn]) for key, fn of @key_events
     @history = new app.collections.History
     @history.on 'change', (command) =>

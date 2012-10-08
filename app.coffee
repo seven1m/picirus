@@ -43,9 +43,10 @@ app.get '/login-failure', (req, res) ->
 app.post '/auth/browserid',
   passport.authenticate('browserid', failureRedirect: '/login-failure'),
   (req, res) ->
+    req.session.username = req.user.username
     res.json
       status: 'success'
-      username: req.user.username
+      username: req.session.username
 
 require(__dirname + '/sync')(server)
 

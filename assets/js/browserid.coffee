@@ -12,6 +12,5 @@ $ ->
             200: (data) ->
               app.console.setUsername data.username
               app.console.focus()
-
       else
         location.reload()

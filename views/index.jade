@@ -4,6 +4,8 @@ block scripts
   != css('console')
   != js('main')
   script(src='/js/templates.js')
+  script
+    app.username = '#{session.username || 'guest'}'
 
 block content
   .console.full

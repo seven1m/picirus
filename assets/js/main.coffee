@@ -8,5 +8,5 @@
 
 $ ->
   Backbone.socket = io.connect()
-  app.console = new app.views.Console(el: $('.console')).render()
+  app.console = new app.views.Console(el: $('.console'), username: app.username).render()
   app.console.focus()
