@@ -9,6 +9,6 @@ class Plugin
     command.response body, @name, (err, response) =>
       if err then throw err
       @session.response response
-      cb()
+      cb() if cb
 
 module.exports = Plugin
