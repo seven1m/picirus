@@ -8,7 +8,7 @@ class Session
       @stack.push new plugin
 
   process: (command, cb) =>
-    @processPlugin command, @stack.slice(0), ->
+    @processPlugin command, @stack, ->
       command.save cb
 
   processPlugin: (command, stack, cb) =>
@@ -16,7 +16,7 @@ class Session
     plugin = stack[0]
     plugin.process command, (update) =>
       # TODO handle other types of updated attributes
-      command.append update.output
+      command.append update.output if update and update.output
       @processPlugin command, stack.slice(1), cb
 
 module.exports = Session
