@@ -1,7 +1,7 @@
 class app.views.Console extends Backbone.View
 
   username: 'guest'
-  context:  'websh'
+  context:  'wsh'
   path:     '~'
 
   keys:

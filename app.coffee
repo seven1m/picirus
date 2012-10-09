@@ -8,7 +8,7 @@ auth = require(__dirname + '/auth')
 models = require(__dirname + '/models')
 helpers = require(__dirname + '/helpers')
 
-mongoose.connect 'localhost', 'websh'
+mongoose.connect 'localhost', 'wsh'
 
 app = express()
 server = http.createServer(app)
