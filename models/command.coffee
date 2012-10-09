@@ -26,13 +26,20 @@ schema.pre 'save', (next) ->
     @updated = new Date()
   next()
 
-schema.methods.response = (body, plugin, cb) ->
+schema.methods.response = (body, meta, plugin, cb) ->
+  meta ?= {}
+  if cls = meta.class
+    delete meta.class
+  else
+    cls = 'normal'
   response = new Response
     user_id: @user_id
     session_id: @session_id
     command_id: @_id
     body: body
     plugin: plugin
+    class: cls
+    meta: meta
   response.save cb
 
 schema.statics.sync = (socket) ->

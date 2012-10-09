@@ -5,9 +5,18 @@ class Session
 
   constructor: (@socket) ->
     @context = 'wsh'
+    @path = '~'
     @stack = []
     for name, plugin of plugins
       @stack.push new plugin(@)
+
+  setContext: (context) =>
+    @context = context
+    @socket.emit 'context', context
+
+  setPath: (path) =>
+    @path = path
+    @socket.emit 'path', path
 
   process: (command, cb) =>
     @processPlugin command, @stack, cb

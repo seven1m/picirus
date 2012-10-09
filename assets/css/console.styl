@@ -1,11 +1,13 @@
-console-bg = #073642
-header-bg  = #002b36
-default-fg = #93a1a1
-input-fg   = #93a1a1
-prompt-fg  = #b58900
-header-fg  = #2aa198
-nick-fg    = #2aa198
-tagline-fg = #839496
+console-bg      = #073642
+header-bg       = #002b36
+default-fg      = #93a1a1
+input-fg        = #93a1a1
+prompt-fg       = #b58900
+header-fg       = #2aa198
+nick-fg         = #2aa198
+tagline-fg      = #839496
+output-error-fg = #dc322f
+output-info-fg  = #657b83
 
 /*
 base01  = #586e75
@@ -54,6 +56,11 @@ header
   overflow auto
   .content
     padding 10px
+    .output
+      .error
+        color output-error-fg
+      .info
+        color output-info-fg
   .command
     .prompt
       color prompt-fg

@@ -27,6 +27,9 @@ class app.views.Console extends Backbone.View
     Backbone.socket.on 'context', (context) =>
       @context = context
       @updatePrompt()
+    Backbone.socket.on 'path', (path) =>
+      @path = path
+      @updatePrompt()
 
   execute: =>
     if val = @input.val()
@@ -44,6 +47,8 @@ class app.views.Console extends Backbone.View
 
   addResponse: (response) =>
     r = $('<div>', id: response.id)
+    if cls = response.get('class')
+      r.addClass(cls)
     # TODO append other metadata, e.g. 'nick' for irc
     r.append($('<span>', class: 'text', html: response.get('body')))
     r.appendTo(@output)

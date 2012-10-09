@@ -15,6 +15,9 @@ schema = new Schema
     type: String
   plugin:
     type: String
+  class:
+    type: String
+    default: 'normal'
   created:
     type: Date
   updated:
