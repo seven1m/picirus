@@ -6,6 +6,6 @@ module.exports = (server) ->
   io = socketio.listen(server)
   io.sockets.on 'connection', (socket) ->
     # TODO load existing session, multiple sessions, etc.
-    socket.set 'session', new Session
+    socket.set 'session', new Session(socket)
     for name, model of models when model.sync
       model.sync(socket)

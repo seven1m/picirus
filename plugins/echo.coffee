@@ -1,11 +1,13 @@
 # sample plugin
 # echoes commands back as output
 
-class EchoPlugin
+Plugin = require(__dirname + '/plugin')
+
+class EchoPlugin extends Plugin
 
   name: 'echo'
 
   process: (command, next) =>
-    next output: command.input
+    @response command, command.body, next
 
 module.exports = EchoPlugin

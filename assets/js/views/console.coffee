@@ -22,28 +22,28 @@ class app.views.Console extends Backbone.View
     @username = @options.username if @options.username
     @on(key, @[fn]) for key, fn of @key_events
     @history = new app.collections.History
-    @history.on 'change', (command) =>
-      $('#' + command.cid).find('.text').html command.get('output')
+    @responses = new app.collections.Responses
+    @responses.on 'add', @addResponse
 
   execute: =>
     if val = @input.val()
-      command = @history.create input: val
-      @addOutput command
+      @history.create body: val
       @input.val ''
       @updatePrompt()
       @history.resetPointer()
       @$el.scrollTop(100000000)
 
   historyPrev: =>
-    @input.val @history.prev()?.get('input')
+    @input.val @history.prev()?.get('body')
 
   historyNext: =>
-    @input.val @history.next()?.get('input')
+    @input.val @history.next()?.get('body')
 
-  addOutput: (command) =>
-    $('<div>', id: command.cid)
-      .append($('<span>', class: 'text', html: command.get('output')))
-      .appendTo(@output)
+  addResponse: (response) =>
+    r = $('<div>', id: response.id)
+    # TODO append other metadata, e.g. 'nick' for irc
+    r.append($('<span>', class: 'text', html: response.get('body')))
+    r.appendTo(@output)
 
   handleEvent: (e) =>
     if e.keyCode in _(@keys).values()

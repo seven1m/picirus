@@ -2,21 +2,21 @@ plugins = require(__dirname + '/plugins')
 
 class Session
 
-  constructor: ->
+  constructor: (@socket) ->
     @stack = []
     for name, plugin of plugins
-      @stack.push new plugin
+      @stack.push new plugin(@)
 
   process: (command, cb) =>
-    @processPlugin command, @stack, ->
-      command.save cb
+    @processPlugin command, @stack, cb
 
   processPlugin: (command, stack, cb) =>
     return cb() unless stack.length > 0
     plugin = stack[0]
     plugin.process command, (update) =>
-      # TODO handle other types of updated attributes
-      command.append update.output if update and update.output
       @processPlugin command, stack.slice(1), cb
+
+  response: (response) =>
+    @socket.emit 'sync.response.created', response
 
 module.exports = Session

@@ -1,16 +1,19 @@
+Response = require(__dirname + '/response')
+
 mongoose = require('mongoose')
 
-schema = mongoose.Schema
+Schema = mongoose.Schema
+
+schema = new Schema
   user_id:
-    type: Number
+    type: Schema.ObjectId
     #required: true
   session_id:
-    type: Number
-  input:
+    type: Schema.ObjectId
+    #required: true
+  body:
     type: String
     required: true
-  output:
-    type: String
   created:
     type: Date
   updated:
@@ -23,11 +26,14 @@ schema.pre 'save', (next) ->
     @updated = new Date()
   next()
 
-schema.methods.append = (output) ->
-  if @output
-    @output += "\n" + output
-  else
-    @output = output
+schema.methods.response = (body, plugin, cb) ->
+  response = new Response
+    user_id: @user_id
+    session_id: @session_id
+    command_id: @_id
+    body: body
+    plugin: plugin
+  response.save cb
 
 schema.statics.sync = (socket) ->
   socket.on 'sync.command.create', (data, cb) =>
@@ -35,6 +41,7 @@ schema.statics.sync = (socket) ->
     command.save (err) ->
       if err then throw err # FIXME better error handling
       socket.get 'session', (err, session) ->
-        session.process command, cb
+        session.process command, ->
+          cb null, command
 
 module.exports = model = mongoose.model 'Command', schema
