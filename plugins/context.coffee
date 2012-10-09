@@ -9,10 +9,8 @@ class ContextPlugin extends Plugin
   context: '*'
 
   process: (command, next, halt) =>
-    if m = command.body.match(/^cd (.*)/)
-      context = m[1]
-      @session.context = context # TODO check it is a valid context
-      @session.socket.emit 'context', context
+    if m = command.body.match(/^(context|cx) (.*)/)
+      @session.setContext m[2] # TODO check it is a valid context
       halt()
     else
       next()
