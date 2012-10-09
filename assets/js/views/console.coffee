@@ -24,6 +24,9 @@ class app.views.Console extends Backbone.View
     @history = new app.collections.History
     @responses = new app.collections.Responses
     @responses.on 'add', @addResponse
+    Backbone.socket.on 'context', (context) =>
+      @context = context
+      @updatePrompt()
 
   execute: =>
     if val = @input.val()

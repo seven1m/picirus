@@ -6,6 +6,7 @@ Plugin = require(__dirname + '/plugin')
 class EchoPlugin extends Plugin
 
   name: 'echo'
+  context: 'echo'
 
   process: (command, next) =>
     @response command, command.body

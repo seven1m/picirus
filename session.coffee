@@ -1,8 +1,10 @@
+_ = require('underscore')
 plugins = require(__dirname + '/plugins')
 
 class Session
 
   constructor: (@socket) ->
+    @context = 'wsh'
     @stack = []
     for name, plugin of plugins
       @stack.push new plugin(@)
@@ -13,8 +15,13 @@ class Session
   processPlugin: (command, stack, cb) =>
     return cb() unless stack.length > 0
     plugin = stack[0]
-    plugin.process command, (update) =>
-      @processPlugin command, stack.slice(1), cb
+    if plugin.context == '*' or plugin.context == @context
+      plugin.process command, _.bind(@next, this, command, stack, cb), cb
+    else
+      @next command, stack, cb
+
+  next: (command, stack, cb) =>
+    @processPlugin command, stack.slice(1), cb
 
   response: (response) =>
     @socket.emit 'sync.response.created', response
