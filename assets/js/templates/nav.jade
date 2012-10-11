@@ -1,0 +1,6 @@
+ul
+  for tab in tabs
+    li(class=tab.get('active') && 'active', id=tab.cid)
+      a.tab(href='#')= tab.get('context')
+  li
+    a.new-tab(href='#') +

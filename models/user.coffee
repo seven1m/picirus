@@ -1,7 +1,9 @@
+mixins = require(__dirname + '/mixins')
+
 mongoose = require('mongoose')
 
 usernameRegexp = /^[a-z0-9_\-\.]{3,15}$/i
-emailRegexp = /^[a-z0-9\-\_\.%]+@[a-z0-9\-\.]+$/i
+emailRegexp = /^[a-z0-9_\-\.%]+@[a-z0-9\-\.]+$/i
 
 schema = mongoose.Schema
   username:
@@ -26,12 +28,7 @@ schema = mongoose.Schema
   last_login:
     type: Date
 
-schema.pre 'save', (next) ->
-  if !@created
-    @created = @updated = new Date()
-  else
-    @updated = new Date()
-  next()
+schema.plugin mixins.timestamps
 
 schema.pre 'save', (next) ->
   unless @username

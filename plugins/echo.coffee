@@ -1,15 +1,15 @@
 # sample plugin
 # echoes commands back as output
 
-Plugin = require(__dirname + '/plugin')
+BasePlugin = require(__dirname + '/base')
 
-class EchoPlugin extends Plugin
+class EchoPlugin extends BasePlugin
 
   name: 'echo'
   context: 'echo'
 
   process: (command, next) =>
     @response command, command.body
-    next() # don't wait until response is written to continue
+    next()
 
 module.exports = EchoPlugin

@@ -1,9 +1,9 @@
 # sample plugin
 # echoes commands back as output
 
-Plugin = require(__dirname + '/plugin')
+BasePlugin = require(__dirname + '/base')
 
-class ContextPlugin extends Plugin
+class ContextPlugin extends BasePlugin
 
   name: 'context'
   context: '*'

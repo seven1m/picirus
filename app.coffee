@@ -13,6 +13,8 @@ mongoose.connect 'localhost', 'wsh'
 app = express()
 server = http.createServer(app)
 
+app.secret = "Never send a human to do a machine's job."
+
 app.configure ->
   app.set 'port', process.env.PORT || 3000
   app.set 'views', __dirname + '/views'
@@ -20,7 +22,7 @@ app.configure ->
   app.use express.logger('dev')
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use express.cookieParser("Never send a human to do a machine's job.")
+  app.use express.cookieParser(app.secret)
   app.use express.cookieSession()
   app.use passport.initialize()
   app.use passport.session()
@@ -48,7 +50,7 @@ app.post '/auth/browserid',
       status: 'success'
       username: req.session.username
 
-require(__dirname + '/sync')(server)
+require(__dirname + '/sync')(server, app)
 
 server.listen app.get('port'), ->
   console.log("Express server listening on port " + app.get('port'))

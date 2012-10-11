@@ -1,16 +1,20 @@
 Response = require(__dirname + '/response')
+mixins = require(__dirname + '/mixins')
+Stack = new require(__dirname + '/../plugins').Stack
 
 mongoose = require('mongoose')
-
 Schema = mongoose.Schema
 
 schema = new Schema
   user_id:
     type: Schema.ObjectId
-    #required: true
+    required: true
   session_id:
     type: Schema.ObjectId
-    #required: true
+    required: true
+  console_id:
+    type: Schema.ObjectId
+    required: true
   body:
     type: String
     required: true
@@ -19,12 +23,15 @@ schema = new Schema
   updated:
     type: Date
 
-schema.pre 'save', (next) ->
-  if !@created
-    @created = @updated = new Date()
-  else
-    @updated = new Date()
-  next()
+schema.plugin mixins.timestamps
+
+schema.plugin mixins.sync,
+  keys: ['body']
+  read: true
+  create: true
+  afterCreate: (model, _, socket) ->
+    socket.get 'session', (err, session) ->
+      session.process model
 
 schema.methods.response = (body, meta, plugin, cb) ->
   meta ?= {}
@@ -41,14 +48,5 @@ schema.methods.response = (body, meta, plugin, cb) ->
     class: cls
     meta: meta
   response.save cb
-
-schema.statics.sync = (socket) ->
-  socket.on 'sync.command.create', (data, cb) =>
-    command = new this(data)
-    command.save (err) ->
-      if err then throw err # FIXME better error handling
-      socket.get 'session', (err, session) ->
-        session.process command, ->
-          cb null, command
 
 module.exports = model = mongoose.model 'Command', schema

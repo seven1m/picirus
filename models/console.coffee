@@ -10,18 +10,19 @@ schema = new Schema
   session_id:
     type: Schema.ObjectId
     required: true
-  console_id:
-    type: Schema.ObjectId
-    required: true
-  command_id:
-    type: Schema.ObjectId
-  body:
+  position:
+    type: Number
+  name:
     type: String
-  plugin:
+  context:
     type: String
-  class:
+    default: 'wsh'
+  path:
     type: String
-    default: 'normal'
+    default: '~'
+  active:
+    type: Boolean
+    default: false
   created:
     type: Date
   updated:
@@ -30,6 +31,10 @@ schema = new Schema
 schema.plugin mixins.timestamps
 
 schema.plugin mixins.sync,
+  keys: ['position', 'name', 'context', 'path', 'active']
   read: true
+  create: true
+  update: true
+  delete: true
 
-module.exports = model = mongoose.model 'Response', schema
+module.exports = model = mongoose.model 'Console', schema

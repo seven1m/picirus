@@ -1,14 +1,14 @@
-# abstract plugin class
+# base plugin class
 # all plugins should extend this class
 
-class Plugin
+class BasePlugin
 
-  constructor: (@session) ->
+  constructor: (@stack) ->
 
   response: (command, body, meta, cb) =>
     command.response body, meta, @name, (err, response) =>
       if err then throw err
-      @session.response response
+      @stack.response response
       cb() if cb
 
   error: (command, body, cb) =>
@@ -24,4 +24,4 @@ class Plugin
       msg = msg.replace('%s', arg)
     msg
 
-module.exports = Plugin
+module.exports = BasePlugin

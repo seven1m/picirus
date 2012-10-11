@@ -1,22 +1,25 @@
 _ = require('underscore')
+models = require(__dirname + '/models')
 plugins = require(__dirname + '/plugins')
 
 class Session
 
   constructor: (@socket) ->
-    @context = 'wsh'
-    @path = '~'
     @stack = []
     for name, plugin of plugins
       @stack.push new plugin(@)
 
-  setContext: (context) =>
-    @context = context
-    @socket.emit 'context', context
-
-  setPath: (path) =>
-    @path = path
-    @socket.emit 'path', path
+  load: (cb) =>
+    # FIXME this breaks when not logged in
+    user_id = @socket.handshake.session.passport.user
+    models.session.findOne(user_id: user_id).sort('-updated').exec (err, sess) =>
+      if err then throw err
+      @sess = sess || new models.session(user_id: user_id)
+      @sess.save (err) =>
+        if err then throw err
+        @socket.set 'session', this, =>
+          @socket.emit 'sync.session.created', @sess.toJSON()
+        cb()
 
   process: (command, cb) =>
     @processPlugin command, @stack, cb

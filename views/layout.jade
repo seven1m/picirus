@@ -9,11 +9,11 @@ html
     block scripts
   body
     header
-      nav
-        include _browserid
       h1 WSH
       | 
       span.tagline Command the web.
+      nav.user
+        include _browserid
     if flash('error')
       .error= flash('error')
     block content

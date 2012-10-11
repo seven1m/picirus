@@ -1,13 +1,20 @@
-console-bg      = #073642
-header-bg       = #002b36
-default-fg      = #93a1a1
-input-fg        = #93a1a1
-prompt-fg       = #b58900
-header-fg       = #2aa198
-nick-fg         = #2aa198
-tagline-fg      = #839496
-output-error-fg = #dc322f
-output-info-fg  = #657b83
+console-bg          = #073642
+header-bg           = #002b36
+header-border       = #839496
+default-fg          = #93a1a1
+input-fg            = #93a1a1
+prompt-fg           = #b58900
+header-fg           = #2aa198
+nick-fg             = #2aa198
+tagline-fg          = #839496
+output-error-fg     = #dc322f
+output-info-fg      = #657b83
+tab-inactive-bg     = transparent
+tab-inactive-fg     = #839496
+tab-inactive-border = #586e75
+tab-active-bg       = #073642
+tab-active-fg       = #eee8d5
+tab-active-border   = #839496
 
 /*
 base01  = #586e75
@@ -23,6 +30,14 @@ blue    = #268bd2
 green   = #859900
 */
 
+@import reset
+
+tab-border(color, bg)
+  border-left  1px solid color
+  border-top   1px solid color
+  border-right 1px solid color
+  border-bottom 1px solid bg
+
 html, body
   height 100%
   margin 0
@@ -36,8 +51,9 @@ body
 header
   background-color header-bg
   padding 5px 10px
-  overflow auto
   height 26px
+  text-align center
+  border-bottom 1px solid header-border
   h1
     font-size 12pt
     color header-fg
@@ -48,14 +64,43 @@ header
   .tagline
     font-weight normal
     color tagline-fg
-  nav
+  nav.tabs
+    float left
+    ul
+      list-style none
+      li
+        display inline-block
+        margin 7px 10px 0 0
+        background-color tab-inactive-bg
+        border-radius 5px 5px 0 0
+        color tab-inactive-fg
+        tab-border tab-inactive-border tab-inactive-bg
+        a
+          display inline-block
+          padding 4px 8px 2px 8px
+          color tab-inactive-fg
+        &.active
+          display relative
+          z-index 10
+          background-color tab-active-bg
+          color tab-active-fg
+          tab-border tab-active-border tab-active-bg
+          a
+            padding-bottom 3px
+            color tab-active-fg
+  nav.user
     float right
 
+a
+  color default-fg
+  text-decoration none
+
 .console
+  clear both
   margin 0
   overflow auto
   .content
-    padding 10px
+    padding 15px 10px
     .output
       .error
         color output-error-fg

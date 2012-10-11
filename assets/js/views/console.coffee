@@ -1,8 +1,6 @@
 class app.views.Console extends Backbone.View
 
-  username: 'guest'
-  context:  'wsh'
-  path:     '~'
+  className: 'console full'
 
   keys:
     return: 13
@@ -19,31 +17,24 @@ class app.views.Console extends Backbone.View
     down:   'historyNext'
 
   initialize: ->
-    @username = @options.username if @options.username
+    @active = @options.active
     @on(key, @[fn]) for key, fn of @key_events
-    @history = new app.collections.History
-    @responses = new app.collections.Responses
-    @responses.on 'add', @addResponse
-    Backbone.socket.on 'context', (context) =>
-      @context = context
-      @updatePrompt()
-    Backbone.socket.on 'path', (path) =>
-      @path = path
-      @updatePrompt()
+    @model.on 'change', @updatePrompt
+    @model.on 'change:input', (_, input) =>
+      @input.val input
+    @model.on 'change:active', (_, active) =>
+      if active then @$el.show()
+      else @$el.hide()
+    @model.responses.on 'add', @addResponse
 
   execute: =>
-    if val = @input.val()
-      @history.create body: val
-      @input.val ''
-      @updatePrompt()
-      @history.resetPointer()
-      @$el.scrollTop(100000000)
+    @model.execute @input.val()
 
   historyPrev: =>
-    @input.val @history.prev()?.get('body')
+    @model.historyPrev()
 
   historyNext: =>
-    @input.val @history.next()?.get('body')
+    @model.historyNext()
 
   addResponse: (response) =>
     r = $('<div>', id: response.id)
@@ -65,12 +56,8 @@ class app.views.Console extends Backbone.View
       @$el.height bodyHeight - headerHeight
     @updatePrompt()
 
-  setUsername: (username) =>
-    @username = username
-    @updatePrompt()
-
   updatePrompt: =>
-    @prompt = "#{@username}@#{@context}:#{@path}&gt;"
+    @prompt = "#{@model.get 'context'}:#{@model.get 'path'}&gt;"
     @$el.find('.prompt').html @prompt
     width = @content.width()
     promptWidth = @$el.find('.prompt').outerWidth(true)
@@ -79,8 +66,10 @@ class app.views.Console extends Backbone.View
   focus: =>
     @input[0].focus()
 
+  # only should be called once
   render: =>
-    @$el.html jade.render('console', prompt: 'guest')
+    @$el.appendTo('#main')
+    @$el.html jade.render('console')
     @input = @$el.find('input')
     @content = @$el.find('.content')
     @output = @content.find('.output')

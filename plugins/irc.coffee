@@ -2,9 +2,9 @@
 # connect to irc server, join room, talk
 
 irc = require('irc')
-Plugin = require(__dirname + '/plugin')
+BasePlugin = require(__dirname + '/base')
 
-class IrcPlugin extends Plugin
+class IrcPlugin extends BasePlugin
 
   name: 'irc'
   context: 'irc'
@@ -14,7 +14,7 @@ class IrcPlugin extends Plugin
   info_connected_to: 'connected to %s'
   info_joined: 'joined %s'
 
-  commands: ['cd', 'connect', 'join', 'say']
+  commands: ['connect', 'join', 'say']
 
   process: (command, next) =>
     @session.irc ?= {}
@@ -24,14 +24,6 @@ class IrcPlugin extends Plugin
       else
         @error command, @error_missing_command
     next()
-
-  cd: (path, command) =>
-    if m = path.match(/^\/(.*)/)
-      @connect m[1], command
-    else if @session.irc.server
-      @join path, command
-    else
-      @connect path, command
 
   connect: (server, command) =>
     @session.irc.server = server
