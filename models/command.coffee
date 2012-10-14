@@ -12,9 +12,6 @@ schema = new Schema
   session_id:
     type: Schema.ObjectId
     required: true
-  console_id:
-    type: Schema.ObjectId
-    required: true
   body:
     type: String
     required: true

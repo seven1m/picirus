@@ -7,6 +7,12 @@ Session = require(__dirname + '/session')
 module.exports = (server, app) ->
   io = socketio.listen(server)
 
+  io.configure 'production', ->
+    io.set 'log level', 1
+
+  io.configure 'development', ->
+    io.set 'log level', 2
+
   # parse session cookie and save on the socket
   if app and app.secret
     cookieParser = express.cookieParser(app.secret)
@@ -22,6 +28,6 @@ module.exports = (server, app) ->
 
   io.sockets.on 'connection', (socket) ->
     session = new Session(socket)
-    session.load ->
+    socket.set 'session', session, ->
       for name, model of models when model.sync
         model.sync(socket)

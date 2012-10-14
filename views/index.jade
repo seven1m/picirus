@@ -1,11 +1,10 @@
 extends layout
 
-block scripts
-  != css('console')
-  != js('main')
-  script(src='/js/templates.js')
+append scripts
   script
     app.username = '#{session.username || 'guest'}'
 
 block content
-  #main
+  h1 wat
+  .input
+  .list

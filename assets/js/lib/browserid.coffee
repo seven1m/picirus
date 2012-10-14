@@ -10,7 +10,6 @@ $ ->
             assertion: assertion
           statusCode:
             200: (data) ->
-              app.console.setUsername data.username
-              app.console.focus()
+              console.log 'TODO: logged in'
       else
         location.reload()

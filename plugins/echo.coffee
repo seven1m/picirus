@@ -6,10 +6,9 @@ BasePlugin = require(__dirname + '/base')
 class EchoPlugin extends BasePlugin
 
   name: 'echo'
-  context: 'echo'
 
-  process: (command, next) =>
-    @response command, command.body
+  process: (input, next) =>
+    @output input, [input]
     next()
 
 module.exports = EchoPlugin

@@ -10,9 +10,6 @@ schema = new Schema
   session_id:
     type: Schema.ObjectId
     required: true
-  console_id:
-    type: Schema.ObjectId
-    required: true
   command_id:
     type: Schema.ObjectId
   body:
