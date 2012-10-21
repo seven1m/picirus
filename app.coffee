@@ -4,11 +4,10 @@ path = require('path')
 mongoose = require('mongoose')
 passport = require('passport')
 jade_browser = require('jade-browser')
-auth = require(__dirname + '/auth')
-models = require(__dirname + '/models')
-helpers = require(__dirname + '/helpers')
+models = require('./models')
+helpers = require('./helpers')
 
-mongoose.connect 'localhost', 'wsh'
+mongoose.connect 'localhost', 'minibot'
 
 app = express()
 server = http.createServer(app)
@@ -39,18 +38,9 @@ app.configure 'development', ->
 app.get '/', (req, res) ->
   res.render 'index'
 
-app.get '/login-failure', (req, res) ->
-  res.render 'login-failure'
+require('./auth')(app)
 
-app.post '/auth/browserid',
-  passport.authenticate('browserid', failureRedirect: '/login-failure'),
-  (req, res) ->
-    req.session.username = req.user.username
-    res.json
-      status: 'success'
-      username: req.session.username
-
-require(__dirname + '/sync')(server, app)
+require('./sync')(server, app)
 
 server.listen app.get('port'), ->
   console.log("Express server listening on port " + app.get('port'))

@@ -1,8 +1,8 @@
 _ = require('underscore')
 socketio = require('socket.io')
 express = require('express')
-models = require(__dirname + '/models')
-Session = require(__dirname + '/session')
+models = require('./models')
+Session = require('./session')
 
 module.exports = (server, app) ->
   io = socketio.listen(server)

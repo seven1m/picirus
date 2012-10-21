@@ -5,6 +5,11 @@ append scripts
     app.username = '#{session.username || 'guest'}'
 
 block content
-  h1 wat
-  .input
+
+  section
+    = session.username
+    img#logo(src='/images/bot64.png')
+    .arrow-left
+    .input
+
   .list

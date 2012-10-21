@@ -1,6 +1,6 @@
 _ = require('underscore')
-models = require(__dirname + '/models')
-plugins = require(__dirname + '/plugins')
+models = require('./models')
+plugins = require('./plugins')
 
 class Session
 

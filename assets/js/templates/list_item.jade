@@ -1,1 +1,5 @@
-li= item
+li
+  if item.raw_label
+    != item.raw_label
+  else
+    = item.label

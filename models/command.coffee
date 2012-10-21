@@ -1,6 +1,6 @@
-Response = require(__dirname + '/response')
-mixins = require(__dirname + '/mixins')
-Stack = new require(__dirname + '/../plugins').Stack
+Response = require('./response')
+mixins = require('./mixins')
+Stack = new require('../plugins').Stack
 
 mongoose = require('mongoose')
 Schema = mongoose.Schema

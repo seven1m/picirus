@@ -1,4 +1,4 @@
-mixins = require(__dirname + '/mixins')
+mixins = require('./mixins')
 
 mongoose = require('mongoose')
 Schema = mongoose.Schema

@@ -1,4 +1,4 @@
-mixins = require(__dirname + '/mixins')
+mixins = require('./mixins')
 
 mongoose = require('mongoose')
 
@@ -19,8 +19,6 @@ schema = mongoose.Schema
     required: true
     match: emailRegexp
     index: unique: true
-  hashed_password:
-    type: String
   created:
     type: Date
   updated:
@@ -37,5 +35,20 @@ schema.pre 'save', (next) ->
     @username = short
     @alternate_username = short + Math.floor(Math.random() * 10000)
   next()
+
+schema.statics.findOrCreate = (attrs, cb) ->
+  @findOne attrs, (err, user) =>
+    if err
+      cb err
+    else
+      user ?= new this(attrs)
+      user.last_login = new Date()
+      user.save (err) =>
+        # FIXME ugly hack
+        if err and err.code == 11000 and user.alternate_username
+          user.username = user.alternate_username
+          user.save cb
+        else
+          cb err, user
 
 module.exports = mongoose.model 'User', schema

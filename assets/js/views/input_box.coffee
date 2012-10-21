@@ -46,5 +46,5 @@ class app.views.InputBox extends Backbone.View
     @$el.width width - promptWidth
 
   render: =>
-    # noop
+    #@$el.attr 'placeholder', 'search'
     @
