@@ -1,37 +1,56 @@
 DropboxClient = require('dropbox-node').DropboxClient
 
-mixins = require('./mixins')
+Sequelize = require('sequelize')
 
-mongoose = require('mongoose')
-
-schema = mongoose.Schema
+schema =
   provider:
-    type: String
-    required: true
+    type: Sequelize.STRING
+    validate:
+      notNull: true
+      notEmpty: true
   uid:
-    type: String
-    required: true
+    type: Sequelize.STRING
+    validate:
+      notNull: true
+      notEmpty: true
+  type:
+    type: Sequelize.STRING
+    validate:
+      notNull: true
+      notEmpty: true
   token:
-    type: Object
-  created:
-    type: Date
-  updated:
-    type: Date
+    type: Sequelize.STRING
+  secret:
+    type: Sequelize.STRING
+  refresh_token:
+    type: Sequelize.STRING
 
-schema.plugin mixins.timestamps
+Account = module.exports = sequelize.define 'account', schema,
+  underscored: true
 
-schema.statics.findOrInitialize = (attrs, cb) ->
-  @findOne attrs, (err, account) =>
-    if err
-      cb err
-    else
-      account ?= new this(attrs)
-      account.save cb
+  classMethods:
+    findOrInitialize: (attrs, cb) ->
+      @find(where: attrs).complete (err, account) =>
+        account ?= @build(attrs)
+        cb(err, account)
 
-schema.methods.acctInfo = (cb) ->
-  dropbox = new DropboxClient(KEYS.dropbox.key, KEYS.dropbox.secret,
-                              @token.token, @token.secret)
-  console.log dropbox
-  dropbox.getAccountInfo cb
+    buildFromOAuth: (provider, uid, token, secret, cb) ->
+      @findOrInitialize provider: provider, uid: uid, (err, account) ->
+        account.type = 'oauth'
+        account.token = token
+        account.secret = secret
+        account.save().complete(cb)
 
-module.exports = mongoose.model 'Account', schema
+    buildFromOAuth2: (provider, uid, accessToken, refreshToken, cb) ->
+      @findOrInitialize provider: provider, uid: uid, (err, account) ->
+        account.type = 'oauth2'
+        account.token = accessToken
+        account.refresh_token = refreshToken
+        account.save().complete(cb)
+
+  instanceMethods:
+    acctInfo: (cb) ->
+      dropbox = new DropboxClient(KEYS.dropbox.key, KEYS.dropbox.secret,
+                                  @token, @secret)
+      console.log dropbox
+      dropbox.getAccountInfo cb

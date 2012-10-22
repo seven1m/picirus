@@ -37,12 +37,7 @@ module.exports = (app) ->
       consumerSecret: KEYS.dropbox.secret
       callbackURL: "http://#{HOST_NAME}/auth/dropbox/callback"
     , (token, secret, profile, done) ->
-      Account.findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
-        account.token =
-          kind: 'oauth'
-          token: token
-          secret: secret
-        account.save done
+      Account.buildFromOAuth profile.provider, profile.id, token, secret, done
 
   app.get '/auth/flickr',
     passport.authorize('flickr-authz', failureRedirect: '/login-failure')
@@ -56,12 +51,7 @@ module.exports = (app) ->
       consumerSecret: KEYS.flickr.secret
       callbackURL: "http://#{HOST_NAME}/auth/flickr/callback"
     , (token, secret, profile, done) ->
-      Account.findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
-        account.token =
-          kind: 'oauth'
-          token: token
-          secret: secret
-        account.save done
+      Account.buildFromOAuth profile.provider, profile.id, token, secret, done
 
   app.get '/auth/google',
     passport.authorize 'google-authz',
@@ -78,9 +68,4 @@ module.exports = (app) ->
       clientSecret: KEYS.google.client_secret
       callbackURL: "http://#{HOST_NAME}/auth/google/callback"
     , (accessToken, refreshToken, profile, done) ->
-      Account.findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
-        account.token =
-          kind: 'oauth2'
-          access_token: accessToken
-          refresh_token: refreshToken
-        account.save done
+      Account.buildFromOAuth2 profile.provider, profile.id, accessToken, refreshToken, done

@@ -10,10 +10,15 @@ _ = require('underscore')
 mongoose = require('mongoose')
 passport = require('passport')
 jade_browser = require('jade-browser')
-models = require('./models')
 helpers = require('./helpers')
 
-mongoose.connect 'localhost', 'minibot'
+Sequelize = require('sequelize')
+GLOBAL.sequelize = new Sequelize 'minibot', null, null
+  dialect: 'sqlite'
+  storage: __dirname + '/data.sqlite3'
+
+models = require('./models')
+sequelize.sync()
 
 app = express()
 server = http.createServer(app)
@@ -42,14 +47,16 @@ app.configure 'development', ->
   app.use express.errorHandler()
 
 app.get '/', (req, res) ->
-  models.account.find (err, accounts) ->
+  models.account.findAll().error(
+    (e) -> res.render 'error', error: "could not load accounts: #{e}"
+  ).success (accounts) ->
     res.render 'index', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
 app.get '/accounts/:id', (req, res) ->
-  models.account.findOne _id: req.params.id, (err, account) ->
-    if err or not account
-      res.render 'error', error: err || 'account not found'
-    else if ACCOUNT_TYPES[account.provider]
+  models.account.find(req.params.id).error(
+    (e) -> res.render 'error', error: e
+  ).success (account) ->
+    if ACCOUNT_TYPES[account.provider]
       account.acctInfo (err, info) ->
         res.render account.provider, account: account, info: info
     else
@@ -60,4 +67,4 @@ require('./auth')(app)
 require('./sync')(server, app)
 
 server.listen app.get('port'), ->
-  console.log("Express server listening on port " + app.get('port'))
+  console.log("minibot listening on port " + app.get('port'))
