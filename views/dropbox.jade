@@ -1,0 +1,9 @@
+extends layout
+
+block content
+
+  p!= account
+
+  p!= info.display_name
+  p!= (info.quota_info.normal + info.quota_info.shared) / 1024 / 1024 / 1024
+  p!= info.quota_info.quota / 1024 / 1024 / 1024

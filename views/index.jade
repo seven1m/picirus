@@ -1,15 +1,14 @@
 extends layout
 
-append scripts
-  script
-    app.username = '#{session.username || 'guest'}'
-
 block content
 
-  section
-    = session.username
-    img#logo(src='/images/bot64.png')
-    .arrow-left
-    .input
+  ul.accounts
+    for account in accounts
+      li
+        a(href="/accounts/#{account._id}")= account.provider
 
-  .list
+  #add-account
+    select(onchange="if(this.value) location.href=this.value")
+      option(value='') (add an account)
+      for provider in acct_types
+        option(value="/auth/#{provider[0]}")= provider[1]

@@ -4,18 +4,17 @@ html
     title ..:: minibot ::..
     link(href='http://fonts.googleapis.com/css?family=Maven+Pro', rel='stylesheet', type='text/css')
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js')
-    script(src='https://browserid.org/include.js')
     script(src='/socket.io/socket.io.js')
     block scripts
       != css('main')
       != js('main')
       script(src='/js/templates.js')
   body
-    .queue
-      block queue
-    nav.user
-      include _browserid
     #main
+      h1
+        img#logo(src='/images/bot32.png')
+        | minibot
+
       if flash('error')
         .error= flash('error')
       block content

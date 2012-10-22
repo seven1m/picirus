@@ -1,10 +1,10 @@
+DropboxClient = require('dropbox-node').DropboxClient
+
 mixins = require('./mixins')
 
 mongoose = require('mongoose')
 
 schema = mongoose.Schema
-  user_id:
-    type: mongoose.Schema.ObjectId
   provider:
     type: String
     required: true
@@ -27,5 +27,11 @@ schema.statics.findOrInitialize = (attrs, cb) ->
     else
       account ?= new this(attrs)
       account.save cb
+
+schema.methods.acctInfo = (cb) ->
+  dropbox = new DropboxClient(KEYS.dropbox.key, KEYS.dropbox.secret,
+                              @token.token, @token.secret)
+  console.log dropbox
+  dropbox.getAccountInfo cb
 
 module.exports = mongoose.model 'Account', schema

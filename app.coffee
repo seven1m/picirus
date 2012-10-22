@@ -1,6 +1,12 @@
+ACCOUNT_TYPES =
+  dropbox: 'Dropbox'
+  flickr: 'Flickr'
+  google: 'Gmail'
+
 express = require('express')
 http = require('http')
 path = require('path')
+_ = require('underscore')
 mongoose = require('mongoose')
 passport = require('passport')
 jade_browser = require('jade-browser')
@@ -36,7 +42,18 @@ app.configure 'development', ->
   app.use express.errorHandler()
 
 app.get '/', (req, res) ->
-  res.render 'index'
+  models.account.find (err, accounts) ->
+    res.render 'index', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
+
+app.get '/accounts/:id', (req, res) ->
+  models.account.findOne _id: req.params.id, (err, account) ->
+    if err or not account
+      res.render 'error', error: err || 'account not found'
+    else if ACCOUNT_TYPES[account.provider]
+      account.acctInfo (err, info) ->
+        res.render account.provider, account: account, info: info
+    else
+      res.render 'error', error: 'unsupported account type'
 
 require('./auth')(app)
 
