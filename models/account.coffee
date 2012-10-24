@@ -13,6 +13,8 @@ schema =
     validate:
       notNull: true
       notEmpty: true
+  display_name:
+    type: Sequelize.STRING
   type:
     type: Sequelize.STRING
     validate:
@@ -34,15 +36,17 @@ Account = module.exports = sequelize.define 'account', schema,
         account ?= @build(attrs)
         cb(err, account)
 
-    buildFromOAuth: (provider, uid, token, secret, cb) ->
-      @findOrInitialize provider: provider, uid: uid, (err, account) ->
+    buildFromOAuth: (profile, token, secret, cb) ->
+      @findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
+        account.display_name = profile.displayName
         account.type = 'oauth'
         account.token = token
         account.secret = secret
         account.save().complete(cb)
 
-    buildFromOAuth2: (provider, uid, accessToken, refreshToken, cb) ->
-      @findOrInitialize provider: provider, uid: uid, (err, account) ->
+    buildFromOAuth2: (profile, accessToken, refreshToken, cb) ->
+      @findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
+        account.display_name = profile.displayName
         account.type = 'oauth2'
         account.token = accessToken
         account.refresh_token = refreshToken
@@ -52,5 +56,4 @@ Account = module.exports = sequelize.define 'account', schema,
     acctInfo: (cb) ->
       dropbox = new DropboxClient(KEYS.dropbox.key, KEYS.dropbox.secret,
                                   @token, @secret)
-      console.log dropbox
       dropbox.getAccountInfo cb

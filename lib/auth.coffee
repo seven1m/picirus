@@ -37,7 +37,7 @@ module.exports = (app) ->
       consumerSecret: KEYS.dropbox.secret
       callbackURL: "http://#{HOST_NAME}/auth/dropbox/callback"
     , (token, secret, profile, done) ->
-      Account.buildFromOAuth profile.provider, profile.id, token, secret, done
+      Account.buildFromOAuth profile, token, secret, done
 
   app.get '/auth/flickr',
     passport.authorize('flickr-authz', failureRedirect: '/login-failure')
@@ -51,7 +51,7 @@ module.exports = (app) ->
       consumerSecret: KEYS.flickr.secret
       callbackURL: "http://#{HOST_NAME}/auth/flickr/callback"
     , (token, secret, profile, done) ->
-      Account.buildFromOAuth profile.provider, profile.id, token, secret, done
+      Account.buildFromOAuth profile, token, secret, done
 
   app.get '/auth/google',
     passport.authorize 'google-authz',
@@ -68,4 +68,4 @@ module.exports = (app) ->
       clientSecret: KEYS.google.client_secret
       callbackURL: "http://#{HOST_NAME}/auth/google/callback"
     , (accessToken, refreshToken, profile, done) ->
-      Account.buildFromOAuth2 profile.provider, profile.id, accessToken, refreshToken, done
+      Account.buildFromOAuth2 profile, accessToken, refreshToken, done

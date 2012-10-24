@@ -6,15 +6,36 @@ html
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js')
     script(src='/socket.io/socket.io.js')
     block scripts
+      != css('bootstrap')
       != css('main')
       != js('main')
       script(src='/js/templates.js')
   body
-    #main
-      h1
-        img#logo(src='/images/bot32.png')
-        | minibot
+    nav.navbar.navbar-static-top
+      .navbar-inner
+        .row-fluid
+          .span2
+            .brand
+              img(src='/images/bot16.png')
+              a(href='/') minibot
+          .span8
+            ul.nav
+              li(class = path == '' && 'active')
+                a(href='/') home
+              li(class = path == 'accounts' && 'active')
+                a(href='/accounts') accounts
+          .span2
+            form(class='navbar-search')
+              input(type='text', class='search-query', placeholder='Search')
 
-      if flash('error')
-        .error= flash('error')
-      block content
+    #main
+      .row-fluid
+        section.span2
+          block left
+        section.span8
+          if err = flash('error')
+            .alert= err
+          block center
+        section.span2
+          block right
+

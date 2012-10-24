@@ -1,12 +1,22 @@
 extends layout
 
-block content
+block center
 
-  ul.accounts
-    for account in accounts
-      li
-        a(href="/accounts/#{account.id}")= account.provider
+  .row-fluid
+    .span12
+      table.table.table-bordered.table-striped
+        thead
+          tr
+            th type
+            th name
+        tbody
+          for account in accounts
+            tr
+              td
+                a(href="/accounts/#{account.provider}/#{account.uid}")= account.provider
+              td= account.display_name
 
+block left
   #add-account
     select(onchange="if(this.value) location.href=this.value")
       option(value='') (add an account)

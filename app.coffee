@@ -45,19 +45,21 @@ app.configure ->
 app.configure 'development', ->
   app.use express.errorHandler()
 
-app.get '/', (req, res) ->
+app.get '/', (req, res) -> res.redirect '/accounts' # for now
+
+app.get '/accounts', (req, res) ->
   models.account.findAll().error(
     (e) -> res.render 'error', error: "could not load accounts: #{e}"
   ).success (accounts) ->
     res.render 'index', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
-app.get '/accounts/:id', (req, res) ->
-  models.account.find(req.params.id).error(
-    (e) -> res.render 'error', error: e
-  ).success (account) ->
-    if ACCOUNT_TYPES[account.provider]
+app.get '/accounts/:provider/:uid', (req, res) ->
+  models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete (err, account) ->
+    if err or not account
+      res.render 'error', error: err || 'account not found'
+    else if ACCOUNT_TYPES[account.provider]
       account.acctInfo (err, info) ->
-        res.render account.provider, account: account, info: info
+        res.render account.provider, account: account, info: info, error: err
     else
       res.render 'error', error: 'unsupported account type'
 

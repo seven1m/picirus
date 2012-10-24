@@ -1,9 +1,26 @@
 extends layout
 
-block content
+block center
 
-  p!= account
+  if error
+    .alert
+      h1 Oops!
+      p There was an error connecting to this account. Please try again later.
 
-  p!= info.display_name
-  p!= (info.quota_info.normal + info.quota_info.shared) / 1024 / 1024 / 1024
-  p!= info.quota_info.quota / 1024 / 1024 / 1024
+  else
+    p!= (info.quota_info.normal + info.quota_info.shared) / 1024 / 1024 / 1024
+    p!= info.quota_info.quota / 1024 / 1024 / 1024
+
+block left
+  p
+    strong Account Type
+    br
+    | Dropbox
+  p
+    strong Account Name
+    br
+    = account.display_name
+  p
+    strong UID
+    br
+    = account.uid
