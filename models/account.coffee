@@ -1,6 +1,6 @@
-DropboxClient = require('dropbox-node').DropboxClient
-
 Sequelize = require('sequelize')
+
+presenters = require('../presenters')
 
 schema =
   provider:
@@ -54,6 +54,7 @@ Account = module.exports = sequelize.define 'account', schema,
 
   instanceMethods:
     acctInfo: (cb) ->
-      dropbox = new DropboxClient(KEYS.dropbox.key, KEYS.dropbox.secret,
-                                  @token, @secret)
-      dropbox.getAccountInfo cb
+      if presenter = presenters[@provider]
+        new presenter this, cb
+      else
+        cb('invalid account provider')

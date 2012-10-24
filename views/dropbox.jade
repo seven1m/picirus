@@ -1,5 +1,8 @@
 extends layout
 
+append scripts
+  != js('views/dropbox')
+
 block center
 
   if error
@@ -8,11 +11,12 @@ block center
       p There was an error connecting to this account. Please try again later.
 
   else
-    p!= (info.quota_info.normal + info.quota_info.shared) / 1024 / 1024 / 1024
-    p!= info.quota_info.quota / 1024 / 1024 / 1024
+    p!= info.used()
+    p!= info.quota()
+    p!= info.free()
 
-    #chart1
-      svg(style='width:600px;height:400px')
+    //-#chart1
+      //-svg(style='width:600px;height:400px')
 
     #chart2
       svg(style='width:600px;height:400px')

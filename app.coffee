@@ -57,11 +57,9 @@ app.get '/accounts/:provider/:uid', (req, res) ->
   models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete (err, account) ->
     if err or not account
       res.render 'error', error: err || 'account not found'
-    else if ACCOUNT_TYPES[account.provider]
+    else
       account.acctInfo (err, info) ->
         res.render account.provider, account: account, info: info, error: err
-    else
-      res.render 'error', error: 'unsupported account type'
 
 require('./lib/auth')(app)
 
