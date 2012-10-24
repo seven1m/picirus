@@ -11,13 +11,14 @@ _ = require('underscore')
 passport = require('passport')
 jade_browser = require('jade-browser')
 helpers = require('./lib/helpers')
+Config = require('./lib/config')
 
-GLOBAL.CONFIG = JSON.parse(fs.readFileSync(__dirname + '/config.json'))
+GLOBAL.CONFIG = new Config(__dirname + '/config.json')
 
 Sequelize = require('sequelize')
 GLOBAL.sequelize = new Sequelize 'minibot', null, null
   dialect: 'sqlite'
-  storage: __dirname + '/data.sqlite3'
+  storage: CONFIG.path('database')
 
 models = require('./models')
 sequelize.sync()

@@ -14,6 +14,7 @@
     }
   },
   "paths": {
-    "account": "/var/backup/:account/"
+    "account": "/var/backup/:account/",
+    "database": "data.sqlite3"
   }
 }
