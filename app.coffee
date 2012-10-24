@@ -3,6 +3,7 @@ ACCOUNT_TYPES =
   flickr: 'Flickr'
   google: 'Gmail'
 
+fs = require('fs')
 express = require('express')
 http = require('http')
 path = require('path')
@@ -10,6 +11,8 @@ _ = require('underscore')
 passport = require('passport')
 jade_browser = require('jade-browser')
 helpers = require('./lib/helpers')
+
+GLOBAL.CONFIG = JSON.parse(fs.readFileSync(__dirname + '/config.json'))
 
 Sequelize = require('sequelize')
 GLOBAL.sequelize = new Sequelize 'minibot', null, null

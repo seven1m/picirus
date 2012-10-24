@@ -5,7 +5,7 @@ GB = 1024 * 1024 * 1024
 class Dropbox
 
   constructor: (@account, cb) ->
-    dropbox = new DropboxClient(KEYS.dropbox.key, KEYS.dropbox.secret,
+    dropbox = new DropboxClient(CONFIG.keys.dropbox.key, CONFIG.keys.dropbox.secret,
                                 @account.token, @account.secret)
     dropbox.getAccountInfo (err, info) =>
       if err

@@ -1,0 +1,19 @@
+{
+  "keys": {
+    "dropbox": {
+      "key": "nhh9leo0oxyinb4",
+      "secret": "a1tfo119j6kstkz"
+    },
+    "flickr": {
+      "key": "54d93fd1c781a9a01a0c8fb6ec5bbf90",
+      "secret": "e6939da141b95d41"
+    },
+    "google": {
+      "client_id": "618644053859.apps.googleusercontent.com",
+      "client_secret": "23qIXSvZOGua_3tcQNijkEWm"
+    }
+  },
+  "paths": {
+    "account": "/var/backup/:account/"
+  }
+}
