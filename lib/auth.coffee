@@ -18,7 +18,7 @@ DropboxStrategy = require('passport-dropbox').Strategy
 FlickrStrategy = require('passport-flickr').Strategy
 GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
-Account = require('./models/account')
+Account = require('../models/account')
 
 module.exports = (app) ->
 

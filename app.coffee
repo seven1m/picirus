@@ -9,7 +9,7 @@ path = require('path')
 _ = require('underscore')
 passport = require('passport')
 jade_browser = require('jade-browser')
-helpers = require('./helpers')
+helpers = require('./lib/helpers')
 
 Sequelize = require('sequelize')
 GLOBAL.sequelize = new Sequelize 'minibot', null, null
@@ -61,9 +61,9 @@ app.get '/accounts/:id', (req, res) ->
     else
       res.render 'error', error: 'unsupported account type'
 
-require('./auth')(app)
+require('./lib/auth')(app)
 
-require('./sync')(server, app)
+require('./lib/iosync')(server, app)
 
 server.listen app.get('port'), ->
   console.log("minibot listening on port " + app.get('port'))

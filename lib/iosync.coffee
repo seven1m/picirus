@@ -1,8 +1,7 @@
 _ = require('underscore')
 socketio = require('socket.io')
 express = require('express')
-models = require('./models')
-Session = require('./session')
+models = require('../models')
 
 module.exports = (server, app) ->
   io = socketio.listen(server)
@@ -27,7 +26,5 @@ module.exports = (server, app) ->
         accept null, true
 
   io.sockets.on 'connection', (socket) ->
-    session = new Session(socket)
-    socket.set 'session', session, ->
-      for name, model of models when model.sync
-        model.sync(socket)
+    for name, model of models when model.sync
+      model.sync(socket)
