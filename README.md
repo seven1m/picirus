@@ -1,15 +1,13 @@
-# minibot
+# picerus
 
-_(name TBD)_
-
-a little helper to download all your stuff in the cloud
+a little device that downloads all your stuff from the cloud
 
 ## Features
 
 * connect to various cloud services via web interface, e.g. using oauth
-* download content on a regular basis, perhaps near-real-time
+* download content on a regular basis
 * view/download files via web interface
-* view/download files via samba share
+* view/download files via samba/afp share
 * show slideshow via hdmi port
 
 ## Integration
