@@ -11,7 +11,8 @@ models = require('./models')
 
 module.exports = (app) ->
 
-  app.get '/', (req, res) -> res.redirect '/accounts' # for now
+  app.get '/', (req, res) ->
+    res.render 'dashboard'
 
   app.get '/accounts', (req, res) ->
     models.account.findAll().error(

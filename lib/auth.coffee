@@ -19,7 +19,7 @@ module.exports = (app) ->
 
   app.get '/auth/dropbox/callback',
     passport.authorize('dropbox-authz', failureRedirect: '/login-failure'),
-    (req, res) -> res.redirect '/'
+    (req, res) -> res.redirect '/accounts'
 
   passport.use 'dropbox-authz', new DropboxStrategy
       consumerKey: CONFIG.keys.dropbox.key
@@ -33,7 +33,7 @@ module.exports = (app) ->
 
   app.get '/auth/flickr/callback',
     passport.authorize('flickr-authz', failureRedirect: '/login-failure'),
-    (req, res) -> res.redirect '/'
+    (req, res) -> res.redirect '/accounts'
 
   passport.use 'flickr-authz', new FlickrStrategy
       consumerKey: CONFIG.keys.flickr.key
@@ -50,7 +50,7 @@ module.exports = (app) ->
 
   app.get '/auth/google/callback',
     passport.authorize('google-authz', failureRedirect: '/login-failure'),
-    (req, res) -> res.redirect '/'
+    (req, res) -> res.redirect '/accounts'
 
   passport.use 'google-authz', new GoogleStrategy
       clientID: CONFIG.keys.google.client_id

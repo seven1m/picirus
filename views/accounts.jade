@@ -11,17 +11,22 @@ block main
             i.icon-cloud
             | Your Cloud Accounts
         section
-          table.table
-            thead
-              tr
-                th type
-                th name
-            tbody
-              for account in accounts
+          if accounts.length > 0
+            table.table
+              thead
                 tr
-                  td
-                    a(href="/accounts/#{account.provider}/#{account.uid}")= account.provider
-                  td= account.display_name
+                  th type
+                  th name
+              tbody
+                for account in accounts
+                  tr
+                    td
+                      a(href="/accounts/#{account.provider}/#{account.uid}")= account.provider
+                    td= account.display_name
+          else
+            .alert.alert-info
+              | You don't have any accounts configured yet.
+              | Click on an account type to the right to get started!
 
     .span4
       article

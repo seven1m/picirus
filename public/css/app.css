@@ -9,12 +9,15 @@ nav .brand img {
 
 #main {
   margin-top: 25px;
+  min-height: 500px;
 }
 
 article {
   border: 1px solid #aaa;
   background-color: #fff;
   margin-bottom: 25px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
 }
 
 article header {
@@ -42,4 +45,15 @@ h2 [class^="icon-"] {
 ul.icons {
   list-style: none;
   margin: 0;
+}
+
+footer {
+  background: url(/images/bg_footer.png) repeat-x;
+  padding-top: 15px;
+  color: #777;
+  font-size: smaller;
+}
+
+footer a {
+  color: #555;
 }

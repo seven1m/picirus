@@ -19,9 +19,21 @@ html
             a(href='/') Picirus
           ul.nav
             li(class = path == '' && 'active')
-              a(href='/') home
+              a(href='/')
+                i.icon-dashboard
+                |  dashboard
             li(class = path == 'accounts' && 'active')
-              a(href='/accounts') accounts
+              a(href='/accounts')
+                i.icon-cloud
+                |  accounts
+            li(class = path == 'settings' && 'active')
+              a(href='/settings')
+                i.icon-cogs
+                |  settings
+            li(class = path == 'stats' && 'active')
+              a(href='/stats')
+                i.icon-bar-chart
+                |  stats
           form.navbar-search.pull-right
             input(type='text', class='search-query', placeholder='Search')
 
@@ -32,3 +44,8 @@ html
       .container
         block main
 
+    .container
+      footer
+        | &copy; Copyright 2012, TJRM, Inc. &middot; 
+        a(href='mailto:support@tjrm.org') support@tjrm.org
+        |  &middot; icons by <a href="http://fortawesome.github.com/Font-Awesome">Font Awesome</a>
