@@ -1,0 +1,38 @@
+extend layout
+
+block main
+
+  .row
+
+    .span8
+      article
+        header
+          h2
+            i.icon-cloud
+            | Your Cloud Accounts
+        section
+          table.table
+            thead
+              tr
+                th type
+                th name
+            tbody
+              for account in accounts
+                tr
+                  td
+                    a(href="/accounts/#{account.provider}/#{account.uid}")= account.provider
+                  td= account.display_name
+
+    .span4
+      article
+        header
+          h2
+            i.icon-plus-sign
+            | Setup an Account
+        section
+          ul.icons
+            for provider in acct_types
+              li
+                i.icon-plus
+                |  
+                a(href="/auth/#{provider[0]}")= provider[1]

@@ -1,4 +1,4 @@
-# picerus
+# picirus
 
 a little device that downloads all your stuff from the cloud
 

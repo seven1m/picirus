@@ -1,8 +1,3 @@
-ACCOUNT_TYPES =
-  dropbox: 'Dropbox'
-  flickr: 'Flickr'
-  google: 'Gmail'
-
 fs = require('fs')
 express = require('express')
 http = require('http')
@@ -43,31 +38,13 @@ app.configure ->
   app.use helpers
   app.use app.router
   app.use express.static(path.join(__dirname, 'public'))
-  app.use require('connect-assets')()
-  app.use jade_browser('/js/templates.js', '**/*.jade', root: __dirname + '/assets/js/templates')
 
 app.configure 'development', ->
   app.use express.errorHandler()
 
-app.get '/', (req, res) -> res.redirect '/accounts' # for now
-
-app.get '/accounts', (req, res) ->
-  models.account.findAll().error(
-    (e) -> res.render 'error', error: "could not load accounts: #{e}"
-  ).success (accounts) ->
-    res.render 'index', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
-
-app.get '/accounts/:provider/:uid', (req, res) ->
-  models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete (err, account) ->
-    if err or not account
-      res.render 'error', error: err || 'account not found'
-    else
-      account.acctInfo (err, info) ->
-        res.render account.provider, account: account, info: info, error: err
+require('./routes')(app)
 
 require('./lib/auth')(app)
-
-require('./lib/iosync')(server, app)
 
 server.listen app.get('port'), ->
   console.log("minibot listening on port " + app.get('port'))
