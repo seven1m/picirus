@@ -7,13 +7,16 @@ Account = require('../models/account')
 class DropboxPlugin extends BasePlugin
 
   setup: (app) ->
+    app.get '/auth/dropbox', @config, @auth
+    app.get '/auth/dropbox/callback', @auth, @refreshScheduler, @redirect
+
+  config: (req, res, next) =>
     config =
       consumerKey: CONFIG.keys.dropbox.key
       consumerSecret: CONFIG.keys.dropbox.secret
-      callbackURL: "/auth/dropbox/callback"
+      callbackURL: "http://#{req.headers.host}/auth/dropbox/callback"
     passport.use 'dropbox-authz', new DropboxStrategy(config, @build)
-    app.get '/auth/dropbox', @auth
-    app.get '/auth/dropbox/callback', @auth, @redirect
+    next()
 
   auth: passport.authorize('dropbox-authz')
 

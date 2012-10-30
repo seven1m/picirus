@@ -15,7 +15,7 @@ class GooglePlugin extends BasePlugin
     app.get '/auth/google', (req, res) ->
       res.render 'auth/google'
     app.get '/auth/google/go', @auth
-    app.get '/auth/google/callback', @auth, @redirect
+    app.get '/auth/google/callback', @auth, @refreshScheduler, @redirect
 
   auth: passport.authorize('google-authz',
     scope: ['https://www.googleapis.com/auth/userinfo.profile',

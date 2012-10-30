@@ -7,13 +7,16 @@ Account = require('../models/account')
 class FlickrPlugin extends BasePlugin
 
   setup: (app) ->
+    app.get '/auth/flickr', @config, @auth
+    app.get '/auth/flickr/callback', @auth, @refreshScheduler, @redirect
+
+  config: (req, res, next) =>
     config =
       consumerKey: CONFIG.keys.flickr.key
       consumerSecret: CONFIG.keys.flickr.secret
-      callbackURL: "/auth/flickr/callback"
+      callbackURL: "http://#{req.headers.host}/auth/flickr/callback"
     passport.use 'flickr-authz', new FlickrStrategy(config, @build)
-    app.get '/auth/flickr', @auth
-    app.get '/auth/flickr/callback', @auth, @redirect
+    next()
 
   auth: passport.authorize('flickr-authz')
 
