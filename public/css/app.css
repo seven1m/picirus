@@ -1,10 +1,29 @@
+/* color palette: "safeword" (http://www.colourlovers.com/palette/299662/safeword) by jimmyjames */
+
 body {
-  background: url(/images/greyfloral.png);
-  color: #525459;
+  background: url(/images/greyfloral.png); /* background from http://subtlepatterns.com/gray-floral/ */
+  color: #473430;
+}
+
+a {
+  color: #D89845;
+}
+
+.navbar .nav > li > a {
+  color: #473430;
+}
+
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
+  color: #C54B2C;
 }
 
 nav .brand img {
   margin-right: 8px;
+  vertical-align: baseline;
+}
+
+nav .brand a {
+  color: #11BAAC;
 }
 
 #main {
@@ -34,7 +53,6 @@ article section {
 }
 
 h2 {
-  color: #525252;
   font-size: 18px;
 }
 
@@ -56,4 +74,8 @@ footer {
 
 footer a {
   color: #555;
+}
+
+.discreet {
+  color: #aaa;
 }
