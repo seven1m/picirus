@@ -1,4 +1,8 @@
-/* color palette: "safeword" (http://www.colourlovers.com/palette/299662/safeword) by jimmyjames */
+/* color palette: "safeword" (http://www.colourlovers.com/palette/299662/safeword) by jimmyjames
+   #C54B2C = red
+   #D89845 = tan
+   #11BAAC = blue
+*/
 
 body {
   background: url(/images/greyfloral.png); /* background from http://subtlepatterns.com/gray-floral/ */
@@ -6,7 +10,7 @@ body {
 }
 
 a {
-  color: #D89845;
+  color: #C54B2C;
 }
 
 .navbar .nav > li > a {
@@ -56,8 +60,18 @@ h2 {
   font-size: 18px;
 }
 
-h2 [class^="icon-"] {
+h2 [class^="icon-"],
+h3 [class^="icon-"],
+h4 [class^="icon-"] {
   margin-right: 6px;
+}
+
+h3 {
+  font-size: 15px;
+}
+
+h2 strong, h3 strong {
+  color: #C54B2C;
 }
 
 ul.icons {
