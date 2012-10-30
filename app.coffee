@@ -17,7 +17,7 @@ GLOBAL.sequelize = new Sequelize 'minibot', null, null
 models = require('./models')
 sequelize.sync()
 
-Scheduler = require('./scheduler') # must come after models
+Scheduler = require('./lib/scheduler') # must come after models
 
 app = express()
 server = http.createServer(app)

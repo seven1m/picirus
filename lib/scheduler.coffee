@@ -22,10 +22,10 @@ class Scheduler
 
   schedule: (account) =>
     sched = @schedules[account.schedule || 'daily'] || @schedules['daily']
-    sched = '*/10 * * * * *'
     if (plugin = @plugins[account.provider]) and plugin.backup?
       @crons.push new CronJob sched, ->
         plugin.backup(account)
+      plugin.backup(account) # testing
     else
       console.log "account #{account.id}: provider type '#{account.provider}' not supported for backup"
 
