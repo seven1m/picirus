@@ -1,6 +1,7 @@
 _ = require('underscore')
 passport = require('passport')
 DropboxStrategy = require('passport-dropbox').Strategy
+DropboxClient = require('dropbox-node').DropboxClient
 BasePlugin = require('./base')
 Account = require('../models/account')
 
@@ -22,5 +23,13 @@ class DropboxPlugin extends BasePlugin
 
   build: (token, secret, profile, done) =>
     Account.buildFromOAuth profile, token, secret, done
+
+  client: (account) ->
+    new DropboxClient(CONFIG.keys.dropbox.key, CONFIG.keys.dropbox.secret,
+                      account.token, account.secret)
+
+  backup: (account) ->
+    console.log 'backing up dropbox', new Date()
+    console.log 'finished backing up dropbox', new Date()
 
 module.exports = DropboxPlugin

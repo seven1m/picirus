@@ -1,7 +1,5 @@
 Sequelize = require('sequelize')
 
-presenters = require('../presenters')
-
 schema =
   provider:
     type: Sequelize.STRING
@@ -26,6 +24,9 @@ schema =
     type: Sequelize.STRING
   refresh_token:
     type: Sequelize.STRING
+  schedule:
+    type: Sequelize.STRING
+    default: 'daily'
 
 Account = module.exports = sequelize.define 'account', schema,
   underscored: true
@@ -51,10 +52,3 @@ Account = module.exports = sequelize.define 'account', schema,
         account.token = accessToken
         account.refresh_token = refreshToken
         account.save().complete(cb)
-
-  instanceMethods:
-    acctInfo: (cb) ->
-      if presenter = presenters[@provider]
-        new presenter this, cb
-      else
-        cb('invalid account provider')

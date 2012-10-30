@@ -21,6 +21,6 @@
     "passport-dropbox": "0.1.x",
     "passport-flickr": "0.1.x",
     "passport-google-oauth": "0.1.x",
-    "cron": "1.0.x"
+    "cron": "git://github.com/ncb000gt/node-cron.git#1cef12d7"
   }
 }

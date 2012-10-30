@@ -17,6 +17,8 @@ GLOBAL.sequelize = new Sequelize 'minibot', null, null
 models = require('./models')
 sequelize.sync()
 
+Scheduler = require('./scheduler') # must come after models
+
 app = express()
 server = http.createServer(app)
 
@@ -43,7 +45,8 @@ app.configure 'development', ->
 
 require('./routes')(app)
 
-require('./plugins')(app)
+plugins = require('./plugins')(app)
+GLOBAL.scheduler = new Scheduler(models.account, plugins)
 
 server.listen app.get('port'), ->
-  console.log("minibot listening on port " + app.get('port'))
+  console.log("picirus listening on port " + app.get('port'))
