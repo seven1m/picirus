@@ -3,15 +3,26 @@ fs = require('fs')
 class Config
 
   constructor: (path) ->
-    @config = JSON.parse(fs.readFileSync(path))
+    if 'string' == typeof path
+      @config = JSON.parse(fs.readFileSync(path))
+    else
+      @config = path
     for key, val of @config
       @[key] = val
 
-  path: (name) =>
+  path: (name, obj) =>
     p = @paths[name]
-    if p.indexOf('/') == 0
+    p = if p.indexOf('/') == 0
       p
     else
-      __dirname + '/../' + p
+      @root() + p
+    if obj
+      p = p.replace /:(\w+)/g, (m, name) ->
+        obj[name]
+    p
+
+  root: ->
+    __dirname + '/../'
+
 
 module.exports = Config
