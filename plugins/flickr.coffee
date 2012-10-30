@@ -10,7 +10,7 @@ class FlickrPlugin extends BasePlugin
     config =
       consumerKey: CONFIG.keys.flickr.key
       consumerSecret: CONFIG.keys.flickr.secret
-      callbackURL: "http://#{@host}/auth/flickr/callback"
+      callbackURL: "/auth/flickr/callback"
     passport.use 'flickr-authz', new FlickrStrategy(config, @build)
     app.get '/auth/flickr', @auth
     app.get '/auth/flickr/callback', @auth, @redirect

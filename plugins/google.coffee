@@ -10,9 +10,11 @@ class GooglePlugin extends BasePlugin
     config =
       clientID: CONFIG.keys.google.client_id
       clientSecret: CONFIG.keys.google.client_secret
-      callbackURL: "http://#{@host}/auth/google/callback"
+      callbackURL: "urn:ietf:wg:oauth:2.0:oob"
     passport.use 'google-authz', new GoogleStrategy(config, @build)
-    app.get '/auth/google', @auth
+    app.get '/auth/google', (req, res) ->
+      res.render 'auth/google'
+    app.get '/auth/google/go', @auth
     app.get '/auth/google/callback', @auth, @redirect
 
   auth: passport.authorize('google-authz',

@@ -10,7 +10,7 @@ class DropboxPlugin extends BasePlugin
     config =
       consumerKey: CONFIG.keys.dropbox.key
       consumerSecret: CONFIG.keys.dropbox.secret
-      callbackURL: "http://#{@host}/auth/dropbox/callback"
+      callbackURL: "/auth/dropbox/callback"
     passport.use 'dropbox-authz', new DropboxStrategy(config, @build)
     app.get '/auth/dropbox', @auth
     app.get '/auth/dropbox/callback', @auth, @redirect

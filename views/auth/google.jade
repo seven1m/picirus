@@ -1,0 +1,24 @@
+extend ../layout
+
+block main
+  .row
+    .offset3.span6
+      article.push-down
+        header
+          h2
+            i.icon-circle-arrow-right
+            | You will be redirected...
+        section
+          p
+            | We will now open a new browser tab where you can authorize Picirus.
+            | Once finished, you should switch back to this tab and paste the
+            | provided code in the box below...
+          ol
+            li(style='margin-bottom:20px')
+              a.btn.btn-primary(href='/auth/google/go', target='_blank')
+                i.icon-lock
+                | Authorize Picirus...
+            li
+              form(action='/auth/google/callback')
+                input(name='code', placeholder='Paste code here')
+                input(type='submit', value='Save Authorization')
