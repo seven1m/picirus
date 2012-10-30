@@ -2,7 +2,6 @@ fs = require('fs')
 express = require('express')
 http = require('http')
 path = require('path')
-_ = require('underscore')
 passport = require('passport')
 jade_browser = require('jade-browser')
 helpers = require('./lib/helpers')
@@ -44,7 +43,7 @@ app.configure 'development', ->
 
 require('./routes')(app)
 
-require('./lib/auth')(app)
+require('./plugins')(app)
 
 server.listen app.get('port'), ->
   console.log("minibot listening on port " + app.get('port'))
