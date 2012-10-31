@@ -4,14 +4,16 @@ passport = require('passport')
 DropboxStrategy = require('passport-dropbox').Strategy
 DropboxClient = require('dropbox-node').DropboxClient
 BasePlugin = require('./base')
-Account = require('../models/account')
 File = require('../lib/file')
+models = require('../models')
+
+console.log models.account
 
 class DropboxPlugin extends BasePlugin
 
-  setup: (app) ->
+  routes: (app) ->
     app.get '/auth/dropbox', @config, @auth
-    app.get '/auth/dropbox/callback', @auth, @refreshScheduler, @redirect
+    app.get '/auth/dropbox/callback', @auth, @redirect
 
   config: (req, res, next) =>
     config =
@@ -24,7 +26,7 @@ class DropboxPlugin extends BasePlugin
   auth: passport.authorize('dropbox-authz')
 
   build: (token, secret, profile, done) =>
-    Account.buildFromOAuth profile, token, secret, done
+    models.account.buildFromOAuth profile, token, secret, done
 
   client: (account) =>
     @_clients ?= {}

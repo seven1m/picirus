@@ -1,4 +1,5 @@
 Sequelize = require('sequelize')
+plugins = require('../plugins')
 
 schema =
   provider:
@@ -26,9 +27,11 @@ schema =
     type: Sequelize.STRING
   refresh_token:
     type: Sequelize.STRING
-  schedule:
+  status:
     type: Sequelize.STRING
-    default: 'daily'
+    default: 'idle'
+  error:
+    type: Sequelize.STRING
   cursor:
     type: Sequelize.STRING
 
@@ -64,3 +67,20 @@ Account = module.exports = sequelize.define 'account', schema,
         @email = emails[0]
       else if profile.email
         @email = email
+
+    backup: (cb) ->
+      if (p = plugins[@provider]) and p.backup
+        if cb then cb(null)
+        @status = 'busy'
+        @error = ''
+        @save().complete (err) =>
+          p.backup this, (err) =>
+            if err
+              @status = 'error'
+              @error = err
+            else
+              @status = 'idle'
+            @save().complete(cb)
+        true
+      else
+        'provider not supported for backup'

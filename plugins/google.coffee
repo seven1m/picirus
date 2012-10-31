@@ -2,11 +2,11 @@ _ = require('underscore')
 passport = require('passport')
 GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 BasePlugin = require('./base')
-Account = require('../models/account')
+models = require('../models')
 
 class GooglePlugin extends BasePlugin
 
-  setup: (app) ->
+  routes: (app) ->
     config =
       clientID: CONFIG.keys.google.client_id
       clientSecret: CONFIG.keys.google.client_secret
@@ -15,7 +15,7 @@ class GooglePlugin extends BasePlugin
     app.get '/auth/google', (req, res) ->
       res.render 'auth/google'
     app.get '/auth/google/go', @auth
-    app.get '/auth/google/callback', @auth, @refreshScheduler, @redirect
+    app.get '/auth/google/callback', @auth, @redirect
 
   auth: passport.authorize('google-authz',
     scope: ['https://www.googleapis.com/auth/userinfo.profile',
@@ -23,6 +23,6 @@ class GooglePlugin extends BasePlugin
   )
 
   build: (accessToken, refreshToken, profile, done) =>
-    Account.buildFromOAuth2 profile, accessToken, refreshToken, done
+    models.account.buildFromOAuth2 profile, accessToken, refreshToken, done
 
 module.exports = GooglePlugin

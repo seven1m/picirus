@@ -5,19 +5,20 @@ path = require('path')
 passport = require('passport')
 jade_browser = require('jade-browser')
 helpers = require('./lib/helpers')
+Scheduler = require('./lib/scheduler')
 Config = require('./lib/config')
 
 GLOBAL.CONFIG = new Config(__dirname + '/config.json')
 
 Sequelize = require('sequelize')
-GLOBAL.sequelize = new Sequelize 'minibot', null, null
+GLOBAL.sequelize = new Sequelize 'picirus', null, null
   dialect: 'sqlite'
   storage: CONFIG.path('database')
 
 models = require('./models')
 sequelize.sync()
 
-Scheduler = require('./lib/scheduler') # must come after models
+plugins = require('./plugins') # must come after models
 
 app = express()
 server = http.createServer(app)
@@ -45,8 +46,10 @@ app.configure 'development', ->
 
 require('./routes')(app)
 
-plugins = require('./plugins')(app)
-GLOBAL.scheduler = new Scheduler(models.account, plugins)
+for name, plugin of plugins when plugin.routes
+  plugin.routes(app)
+
+new Scheduler(models.account)
 
 server.listen app.get('port'), ->
   console.log("picirus listening on port " + app.get('port'))

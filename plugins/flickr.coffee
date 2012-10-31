@@ -2,13 +2,13 @@ _ = require('underscore')
 passport = require('passport')
 FlickrStrategy = require('passport-flickr').Strategy
 BasePlugin = require('./base')
-Account = require('../models/account')
+models = require('../models')
 
 class FlickrPlugin extends BasePlugin
 
-  setup: (app) ->
+  routes: (app) ->
     app.get '/auth/flickr', @config, @auth
-    app.get '/auth/flickr/callback', @auth, @refreshScheduler, @redirect
+    app.get '/auth/flickr/callback', @auth, @redirect
 
   config: (req, res, next) =>
     config =
@@ -21,6 +21,6 @@ class FlickrPlugin extends BasePlugin
   auth: passport.authorize('flickr-authz')
 
   build: (token, secret, profile, done) =>
-    Account.buildFromOAuth profile, token, secret, done
+    models.account.buildFromOAuth profile, token, secret, done
 
 module.exports = FlickrPlugin
