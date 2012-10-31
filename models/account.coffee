@@ -29,6 +29,8 @@ schema =
   schedule:
     type: Sequelize.STRING
     default: 'daily'
+  cursor:
+    type: Sequelize.STRING
 
 Account = module.exports = sequelize.define 'account', schema,
   underscored: true
