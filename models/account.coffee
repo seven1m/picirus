@@ -13,6 +13,8 @@ schema =
       notEmpty: true
   display_name:
     type: Sequelize.STRING
+  email:
+    type: Sequelize.STRING
   type:
     type: Sequelize.STRING
     validate:
@@ -39,7 +41,7 @@ Account = module.exports = sequelize.define 'account', schema,
 
     buildFromOAuth: (profile, token, secret, cb) ->
       @findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
-        account.display_name = profile.displayName
+        account.updateFromProfile(profile)
         account.type = 'oauth'
         account.token = token
         account.secret = secret
@@ -47,8 +49,16 @@ Account = module.exports = sequelize.define 'account', schema,
 
     buildFromOAuth2: (profile, accessToken, refreshToken, cb) ->
       @findOrInitialize provider: profile.provider, uid: profile.id, (err, account) ->
-        account.display_name = profile.displayName
+        account.updateFromProfile(profile)
         account.type = 'oauth2'
         account.token = accessToken
         account.refresh_token = refreshToken
         account.save().complete(cb)
+
+  instanceMethods:
+    updateFromProfile: (profile) ->
+      @display_name = profile.displayName
+      if profile.emails and (emails = (e.value for e in profile.emails)).length > 0
+        @email = emails[0]
+      else if profile.email
+        @email = email
