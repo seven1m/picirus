@@ -39,10 +39,13 @@ html
             input(type='text', class='search-query', placeholder='Search')
 
     #main
-      if err = flash('error')
-        .alert.alert-box
-          = err
       .container
+        for cls in ['info', 'success', 'error']
+          if msg = flash(cls)
+            .alert(class="alert-#{cls}")
+              i(class=alertIconClass(cls))
+              |  
+              = msg
         block main
 
     .container

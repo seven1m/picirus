@@ -1,4 +1,7 @@
-extends layout
+extend layout
 
-block content
-  p.error= error
+block main
+  .row.offset4.span4.push-down
+    .alert.alert-block.alert-error
+      h4 Error
+      p= error

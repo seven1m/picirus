@@ -98,6 +98,10 @@ footer a {
   text-align: center;
 }
 
+.push-down {
+  margin-top: 25px;
+}
+
 th.actions, td.actions {
   width: 10%;
   white-space: nowrap;

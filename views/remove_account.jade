@@ -10,20 +10,15 @@ block main
             | Remove Account
         section
           p
-            | You are about to remove this account permanently. Once complete, it will not be backed up again.
-          p
-            | Please choose whether you would like to delete the associated backup
-            | data as well.
+            | You are about to remove this account permanently. It will not be backed up again, unless you re-add it.
           .center
             p
-              a.btn.btn-success(href="/accounts/#{account.provider}/#{account.uid}")
+              a.btn.btn-success(href="/accounts")
                 i.icon-arrow-left
-                |  Never mind, get me out of here!
-            p
+                |  Uh, get me out of here!
+              |  
               a.btn.btn-warning(href="/accounts/#{account.provider}/#{account.uid}", data-method='delete', data-confirm='Are you sure you want to remove this account?')
                 i.icon-remove
-                |  Remove this account, but leave my backup data alone.
-            p
-              a.btn.btn-danger(href="/accounts/#{account.provider}/#{account.uid}?remove_data=true", data-method='delete', data-confirm='Are you sure you want to remove this account and delete all backup data associated with it?')
-                i.icon-trash
-                |  Delete this account, and also <strong>delete all associated backup data</strong>.
+                |  Remove this account.
+          p
+            | Note: this operation will <strong>not</strong> delete the data associated with this account.

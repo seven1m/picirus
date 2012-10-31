@@ -18,6 +18,7 @@ block main
                   th type
                   th name
                   th email / id
+                  th status
                   th.actions actions
               tbody
                 for account in accounts
@@ -26,12 +27,16 @@ block main
                       a(href="/accounts/#{account.provider}/#{account.uid}")= account.provider
                     td= account.display_name
                     td= account.email || account.uid
+                    td= account.status
                     td.actions
-                      a.btn(href="/accounts/#{account.provider}/#{account.uid}")
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}", title='edit this account')
                         i.icon-pencil
                       |  
-                      a.btn(href="/accounts/#{account.provider}/#{account.uid}/delete")
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}/delete", title='remove this account')
                         i.icon-trash
+                      |  
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}/backup", data-method='post', title='backup this account now')
+                        i.icon-download
 
           else
             .alert.alert-info

@@ -31,19 +31,28 @@ module.exports = (app) ->
         account.acctInfo (err, info) ->
           res.render account.provider, account: account, info: info, error: err
 
+  app.post '/accounts/:provider/:uid/backup', (req, res) ->
+    find req, (err, account) ->
+      if err or not account
+        res.render 'error', error: err || 'account not found'
+      else
+        status = account.backup()
+        if status == true
+          req.flash 'success', "backing up #{account.provider}..."
+        else
+          req.flash 'error', status
+        res.redirect '/accounts'
+
   app.delete '/accounts/:provider/:uid', (req, res) ->
     find req, (err, account) ->
       if err or not account
         res.render 'error', error: err || 'account not found'
       else
-        if req.query.remove_data
-          # TODO account.removeBackupData (err) -> destroy
-        else
-          account.destroy().complete (err) ->
-            if err
-              res.render 'error', error: err
-            else
-              res.redirect '/accounts'
+        account.destroy().complete (err) ->
+          if err
+            res.render 'error', error: err
+          else
+            res.redirect '/accounts'
 
   app.get '/accounts/:provider/:uid/delete', (req, res) ->
     find req, (err, account) ->
