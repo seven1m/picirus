@@ -93,3 +93,16 @@ footer a {
 .discreet {
   color: #aaa;
 }
+
+.center {
+  text-align: center;
+}
+
+th.actions, td.actions {
+  width: 10%;
+  white-space: nowrap;
+}
+
+a i {
+  cursor: pointer;
+}

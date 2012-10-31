@@ -17,12 +17,22 @@ block main
                 tr
                   th type
                   th name
+                  th email / id
+                  th.actions actions
               tbody
                 for account in accounts
                   tr
                     td
                       a(href="/accounts/#{account.provider}/#{account.uid}")= account.provider
                     td= account.display_name
+                    td= account.email || account.uid
+                    td.actions
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}")
+                        i.icon-pencil
+                      |  
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}/delete")
+                        i.icon-trash
+
           else
             .alert.alert-info
               | You don't have any accounts configured yet.
