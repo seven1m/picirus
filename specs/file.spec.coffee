@@ -4,11 +4,9 @@ rimraf = require('rimraf')
 xattr = require('xattr')
 mkdirp = require('mkdirp')
 Stream = require('stream').Stream
+
+require('./spec_helper')
 File = require('../lib/file')
-Config = require('../lib/config')
-GLOBAL.CONFIG = new Config
-  paths:
-    account: 'test-data/:provider-:uid'
 
 describe File, ->
   account = null

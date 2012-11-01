@@ -10,15 +10,10 @@ Config = require('./lib/config')
 
 GLOBAL.CONFIG = new Config(__dirname + '/config.json')
 
-Sequelize = require('sequelize')
-GLOBAL.sequelize = new Sequelize 'picirus', null, null
-  dialect: 'sqlite'
-  storage: CONFIG.path('database')
-
 models = require('./models')
-sequelize.sync()
+plugins = require('./plugins')
 
-plugins = require('./plugins') # must come after models
+sequelize.sync()
 
 app = express()
 server = http.createServer(app)

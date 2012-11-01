@@ -1,3 +1,4 @@
+require('../db')
 Sequelize = require('sequelize')
 plugins = require('../plugins')
 
