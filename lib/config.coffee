@@ -11,15 +11,17 @@ class Config
       @[key] = val
 
   path: (name, obj) =>
-    p = @paths[name]
-    p = if p.indexOf('/') == 0
+    if p = @paths[name]
+      p = if p.indexOf('/') == 0
+        p
+      else
+        @root() + p
+      if obj
+        p = p.replace /:(\w+)/g, (m, name) ->
+          obj[name]
       p
     else
-      @root() + p
-    if obj
-      p = p.replace /:(\w+)/g, (m, name) ->
-        obj[name]
-    p
+      throw "cannot find path #{name} in config."
 
   root: ->
     __dirname + '/../'
