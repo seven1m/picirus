@@ -7,8 +7,6 @@ BasePlugin = require('./base')
 File = require('../lib/file')
 models = require('../models')
 
-console.log models.account
-
 class DropboxPlugin extends BasePlugin
 
   routes: (app) ->
