@@ -1,6 +1,9 @@
 _ = require('underscore')
+fs = require('fs')
+pathLib = require('path')
 async = require('async')
 passport = require('passport')
+
 DropboxStrategy = require('passport-dropbox').Strategy
 DropboxClient = require('dropbox-node').DropboxClient
 BasePlugin = require('./base')
@@ -63,29 +66,29 @@ class DropboxPlugin extends BasePlugin
       stream = !meta.is_dir && @client(account).getFile(path)
       file = new File account, snapshot, meta.path, meta.is_dir, stream,
         rev: meta.rev
-      save = =>
-        console.log "#{path} - saving..."
-        file.save (err) =>
-          if err
-            console.log "#{path} - error"
-          else
-            console.log "#{path} - finished"
-          cb()
-      file.exists (ex) =>
-        if ex
-          # FIXME doesn't support a folder path becoming a file path or vice versa
-          file.getMeta (err, attrs) =>
-            if attrs.rev and attrs.rev == meta.rev
-              console.log "#{path} - already exists, same rev, skipping..."
-              cb()
-            else
-              save()
+      file.save (err) =>
+        if err
+          console.log "#{path} - error - #{err}"
         else
-          save()
+          console.log "#{path} - saved"
+        cb(err)
     else
-      # FIXME cannot remove file when the case is mixed (not lowercase)
-      console.log "#{path} - removing"
-      file = new File account, snapshot, path
-      file.delete(cb)
+      @_findFile account, snapshot, path, (err, actual) =>
+        console.log "#{path} - removing"
+        file = new File account, snapshot, actual
+        file.delete(cb)
+
+  # cannot remove file when the case is mixed (not lowercase)
+  # so we have to find the file first :(
+  _findFile: (account, snapshot, path, cb) =>
+    full = pathLib.join CONFIG.path('account', account), snapshot, path
+    name = pathLib.basename(path)
+    fs.readdir pathLib.dirname(full), (err, list) =>
+      if err then return cb(err)
+      for file in list
+        if file.toLowerCase() == name.toLowerCase()
+          return cb(null, file)
+      cb('not found')
+
 
 module.exports = DropboxPlugin
