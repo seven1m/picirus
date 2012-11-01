@@ -76,15 +76,14 @@ class Rotation
 class GFSRotation extends Rotation
 
   pathsToKeep: (paths) =>
-    today = moment()
     days = for i in _.range(7)
-      today.clone().subtract('days', i).format('YYYY-MM-DD')
+      @today.clone().subtract('days', i).format('YYYY-MM-DD')
 
-    weekStart = today.clone().day(-7)
+    weekStart = @today.clone().day(-7)
     weeks = for i in _.range(5)
       weekStart.clone().subtract('weeks', i).format('YYYY-MM-DD')
 
-    monthStart = today.clone().date(1)
+    monthStart = @today.clone().date(1)
     months = for i in _.range(12)
       monthStart.clone().subtract('months', i).format('YYYY-MM-DD')
 
