@@ -59,17 +59,45 @@ describe 'rotations', ->
 
     describe '#snapshot', ->
 
-      it 'cp -al the latest directory', ->
-        spyOn(rotation, 'cp_al')
-        cb = jasmine.createSpy('cb')
-        runs ->
-          rotation.snapshot(cb)
-        waitsFor ->
-          rotation.cp_al.callCount > 0
-        runs ->
-          args = rotation.cp_al.mostRecentCall.args
-          expect(args[0]).toEqual('2012-10-30')
-          expect(args[1]).toEqual('2012-10-31')
+      describe 'given there is an existing path to copy', ->
+        it 'cp -al the latest directory', ->
+          spyOn(rotation, 'cp_al')
+          cb = jasmine.createSpy('cb')
+          runs ->
+            rotation.snapshot(cb)
+          waitsFor ->
+            rotation.cp_al.callCount > 0
+          runs ->
+            args = rotation.cp_al.mostRecentCall.args
+            expect(args[0]).toEqual('2012-10-30')
+            expect(args[1]).toEqual('2012-10-31')
+
+      describe 'given there is not an existing path to copy', ->
+        beforeEach ->
+          rotation = new rotations.GFSRotation(root)
+          rotation.today = moment('2012-10-31')
+          spyOn(rotation, 'list').andCallFake (cb) =>
+            setTimeout (-> cb(null, [])), 1
+
+        it 'does not call cp_al', ->
+          spyOn(rotation, 'cp_al')
+          spyOn(rotation, 'mkdir')
+          cb = jasmine.createSpy('cb')
+          runs ->
+            rotation.snapshot(cb)
+          waitsFor (-> rotation.mkdir.callCount > 0), 'mkdir', 1000
+          runs ->
+            expect(rotation.cp_al).not.toHaveBeenCalled()
+
+        it 'calls mkdir', ->
+          spyOn(rotation, 'mkdir')
+          cb = jasmine.createSpy('cb')
+          runs ->
+            rotation.snapshot(cb)
+          waitsFor (-> rotation.mkdir.callCount > 0), 'mkdir', 1000
+          runs ->
+            args = rotation.mkdir.mostRecentCall.args
+            expect(args[0]).toEqual('2012-10-31')
 
     describe 'given that a new backup ran today', ->
 

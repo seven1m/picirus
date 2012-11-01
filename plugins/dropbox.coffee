@@ -36,30 +36,32 @@ class DropboxPlugin extends BasePlugin
 
   backup: (account, cb) =>
     console.log 'backing up dropbox', new Date()
-    @_backup account, (err, cursor) =>
-      console.log 'cursor end:', cursor
-      account.cursor = cursor
-      account.save().complete (err) =>
-        console.log 'finished backing up dropbox', new Date()
-        if cb then cb(err)
+    @snapshot account, (err, snapshot) =>
+      if err then throw err
+      @_backup account, snapshot, (err, cursor) =>
+        @cleanup account, (err) =>
+          if err then throw err
+          account.cursor = cursor
+          account.save().complete (err) =>
+            console.log 'finished backing up dropbox', new Date()
+            if cb then cb(err)
 
-  _backup: (account, cb) =>
-    console.log 'cursor start:', account.cursor
+  _backup: (account, snapshot, cb) =>
     @client(account).delta account.cursor, (err, data) =>
-      async.forEachSeries data.entries, _.bind(@_save, @, account), (err) =>
+      async.forEachSeries data.entries, _.bind(@_save, @, account, snapshot), (err) =>
         if err
           cb(err)
         else if data.has_more
-          @_backup(account, cb)
+          @_backup(account, snapshot, cb)
         else
           cb(null, data.cursor)
 
-  _save: (account, path, cb) =>
+  _save: (account, snapshot, path, cb) =>
     meta = path[1]
     path = path[0]
     if meta
       stream = !meta.is_dir && @client(account).getFile(path)
-      file = new File account, meta.path, meta.is_dir, stream,
+      file = new File account, snapshot, meta.path, meta.is_dir, stream,
         rev: meta.rev
       save = =>
         console.log "#{path} - saving..."
@@ -71,17 +73,19 @@ class DropboxPlugin extends BasePlugin
           cb()
       file.exists (ex) =>
         if ex
+          # FIXME doesn't support a folder path becoming a file path or vice versa
           file.getMeta (err, attrs) =>
-            if attrs.rev and attrs.rev != meta.rev
-              # TODO save old rev of file
-              save()
-            else
+            if attrs.rev and attrs.rev == meta.rev
               console.log "#{path} - already exists, same rev, skipping..."
               cb()
+            else
+              save()
         else
           save()
     else
-      # TODO remove file/directory
-      cb()
+      # FIXME cannot remove file when the case is mixed (not lowercase)
+      console.log "#{path} - removing"
+      file = new File account, snapshot, path
+      file.delete(cb)
 
 module.exports = DropboxPlugin

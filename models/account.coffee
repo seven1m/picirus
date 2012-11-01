@@ -80,7 +80,8 @@ Account = module.exports = sequelize.define 'account', schema,
               @error = err
             else
               @status = 'idle'
-            @save().complete(cb)
+            res = @save()
+            res.complete(cb) if cb
         true
       else
         'provider not supported for backup'

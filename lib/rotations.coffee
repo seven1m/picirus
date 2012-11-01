@@ -4,6 +4,7 @@ path = require('path')
 child_process = require('child_process')
 async = require('async')
 rimraf = require('rimraf')
+mkdirp = require('mkdirp')
 moment = require('moment')
 
 class Rotation
@@ -22,9 +23,16 @@ class Rotation
 
   # call BEFORE running a backup
   snapshot: (cb) =>
-    @latest (err, latest) =>
+    mkdirp @path, (err) =>
       if err then return cb(err)
-      @cp_al latest, @dest(), cb
+      @latest (err, latest) =>
+        if err then return cb(err)
+        if latest
+          @cp_al latest, @dest(), (err) =>
+            cb err, @dest()
+        else
+          @mkdir @dest(), (err) =>
+            cb err, @dest()
 
   # call AFTER running a backup
   cleanup: (cb) =>
@@ -55,9 +63,12 @@ class Rotation
       stderr += data.toString()
     copy.on 'exit', (code) =>
       if code == 0
-        cb()
+        cb(null)
       else
         cb(stderr)
+
+  mkdir: (dest, cb) =>
+    fs.mkdir dest, cb
 
   remove: rimraf
 

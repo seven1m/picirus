@@ -5,15 +5,16 @@ fs = require('fs')
 path = require('path')
 xattr = require('xattr')
 mkdirp = require('mkdirp')
+rimraf = require('rimraf')
 
 class File
 
-  constructor: (@account, @path, @isDir, @data, @meta) ->
+  constructor: (@account, @snapshot, @path, @isDir, @data, @meta) ->
 
   fullPath: =>
     if @path.match(/\.\./)
       throw 'cannot be a relative path'
-    path.join CONFIG.path('account', @account), @path
+    path.join CONFIG.path('account', @account), @snapshot, @path
 
   mkdir: (cb) =>
     name = if @isDir then @fullPath() else path.dirname(@fullPath())
@@ -45,6 +46,9 @@ class File
     for key, val of xattr.list(@fullPath())
       meta[key.replace(/^user\./, '')] = val
     cb null, meta
+
+  delete: (cb) =>
+    rimraf @fullPath(), cb
 
   exists: (cb) =>
     fs.exists @fullPath(), cb

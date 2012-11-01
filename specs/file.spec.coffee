@@ -21,16 +21,16 @@ describe File, ->
       provider: 'dropbox'
       uid: '1234'
 
-    file = new File(account, 'foo/bar')
+    file = new File(account, '2012-10-31', 'foo/bar')
 
   describe '#fullPath', ->
     it 'returns the full path on the filesystem', ->
-      expect(file.fullPath()).toEqual(path.join path.dirname(__dirname), 'test-data/dropbox-1234/foo/bar')
+      expect(file.fullPath()).toEqual(path.join path.dirname(__dirname), 'test-data/dropbox-1234/2012-10-31/foo/bar')
 
   describe '#mkdir', ->
     describe 'given a regular file', ->
       beforeEach ->
-        file = new File(account, 'foo/bar')
+        file = new File(account, '2012-10-31', 'foo/bar')
 
       it 'creates the parent directory for the file', ->
         done = false
@@ -38,13 +38,13 @@ describe File, ->
           file.mkdir -> done = true
         waitsFor (-> done), 'done', 1000
         runs ->
-          dir = __dirname + '/../test-data/dropbox-1234/foo'
+          dir = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo'
           expect(fs.existsSync(dir)).toBeTruthy()
           expect(fs.existsSync(dir + '/bar')).toBeFalsy()
 
     describe 'given a directory', ->
       beforeEach ->
-        file = new File(account, 'foo/baz', true)
+        file = new File(account, '2012-10-31', 'foo/baz', true)
 
       it 'creates the directory', ->
         done = false
@@ -52,14 +52,14 @@ describe File, ->
           file.mkdir -> done = true
         waitsFor (-> done), 'done', 1000
         runs ->
-          dir = __dirname + '/../test-data/dropbox-1234/foo/baz'
+          dir = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/baz'
           expect(fs.existsSync(dir)).toBeTruthy()
           expect(fs.statSync(dir).isDirectory()).toBeTruthy()
 
   describe '#save', ->
     describe 'given string data', ->
       beforeEach ->
-        file = new File(account, 'foo/bar', false, 'file contents')
+        file = new File(account, '2012-10-31', 'foo/bar', false, 'file contents')
 
       it 'writes the file', ->
         args = null
@@ -68,7 +68,7 @@ describe File, ->
         waitsFor (-> args), 'args', 1000
         runs ->
           expect(args[0]).toBeNull()
-          f = __dirname + '/../test-data/dropbox-1234/foo/bar'
+          f = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
           expect(fs.readFileSync(f).toString()).toEqual('file contents')
 
     describe 'given a readable stream', ->
@@ -78,7 +78,7 @@ describe File, ->
         stream = new Stream()
         stream.pause = ->
         stream.resume = -> this.emit 'resume'
-        file = new File(account, 'foo/bar', false, stream)
+        file = new File(account, '2012-10-31', 'foo/bar', false, stream)
 
       it 'writes the file', ->
         args = null
@@ -91,16 +91,16 @@ describe File, ->
         waitsFor (-> args), 'args', 1000
         runs ->
           expect(args[0]).toBeNull()
-          f = __dirname + '/../test-data/dropbox-1234/foo/bar'
+          f = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
           expect(fs.readFileSync(f).toString()).toEqual('stream contents')
 
   describe '#saveMeta', ->
-    filename = __dirname + '/../test-data/dropbox-1234/foo/bar'
+    filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
 
     beforeEach ->
       mkdirp.sync(path.dirname(filename))
       fs.writeFileSync(filename, 'foo')
-      file = new File account, 'foo/bar', false, 'file contents',
+      file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
         url: 'http://example.com/foo/bar'
         rev: '1234'
 
@@ -116,10 +116,10 @@ describe File, ->
           'user.rev': '1234'
 
   describe '#exists', ->
-    filename = __dirname + '/../test-data/dropbox-1234/foo/bar'
+    filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
 
     beforeEach ->
-      file = new File account, 'foo/bar', false, 'file contents'
+      file = new File account, '2012-10-31', 'foo/bar', false, 'file contents'
 
     describe 'given the file does not exist on the filesystem', ->
 
@@ -148,10 +148,10 @@ describe File, ->
           expect(exists).toEqual(true)
 
   describe '#getMeta', ->
-    filename = __dirname + '/../test-data/dropbox-1234/foo/bar'
+    filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
 
     beforeEach ->
-      file = new File account, 'foo/bar', false, 'file contents',
+      file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
         url: 'http://example.com/foo/bar'
         rev: '1234'
       done = false
