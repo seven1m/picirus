@@ -57,6 +57,25 @@ describe File, ->
           expect(fs.statSync(dir).isDirectory()).toBeTruthy()
 
   describe '#save', ->
+    filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
+
+    describe 'given @isDir', ->
+      beforeEach ->
+        file = new File(account, '2012-10-31', 'foo/bar', true)
+
+      describe 'given an existing file of the same name', ->
+        beforeEach ->
+          mkdirp.sync(path.dirname(filename))
+          fs.writeFileSync filename, 'file contents'
+
+        it 'deletes the existing file and creates the directory', ->
+          cb = jasmine.createSpy('cb')
+          runs -> file.save cb
+          waitsFor (-> cb.callCount > 0), 'save', 1000
+          runs ->
+            expect(cb.mostRecentCall.args[0]).toBeNull()
+            expect(fs.statSync(filename).isDirectory()).toBeTruthy()
+
     describe 'given string data', ->
       beforeEach ->
         file = new File(account, '2012-10-31', 'foo/bar', false, 'file contents')
@@ -68,8 +87,7 @@ describe File, ->
         waitsFor (-> args), 'args', 1000
         runs ->
           expect(args[0]).toBeNull()
-          f = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
-          expect(fs.readFileSync(f).toString()).toEqual('file contents')
+          expect(fs.readFileSync(filename).toString()).toEqual('file contents')
 
     describe 'given a readable stream', ->
       stream = null
@@ -91,8 +109,36 @@ describe File, ->
         waitsFor (-> args), 'args', 1000
         runs ->
           expect(args[0]).toBeNull()
-          f = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
-          expect(fs.readFileSync(f).toString()).toEqual('stream contents')
+          expect(fs.readFileSync(filename).toString()).toEqual('stream contents')
+
+    describe 'given the same rev', ->
+      beforeEach ->
+        mkdirp.sync(path.dirname(filename))
+        fs.writeFileSync(filename, 'old contents')
+        xattr.set filename, 'user.rev', '12345'
+        file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
+          rev: '12345'
+
+      it 'does not overwrite the file', ->
+        cb = jasmine.createSpy('cb')
+        runs -> file.save cb
+        waitsFor (-> cb.callCount > 0), 'save', 1000
+        runs ->
+          expect(cb.mostRecentCall.args[0]).toBeNull()
+          expect(fs.readFileSync(filename).toString()).toEqual('old contents')
+
+    describe 'given an existing directory of the same name', ->
+      beforeEach ->
+        mkdirp.sync(filename)
+        file = new File account, '2012-10-31', 'foo/bar', false, 'file contents'
+
+      it 'deletes the existing directory and writes the file', ->
+        cb = jasmine.createSpy('cb')
+        runs -> file.save cb
+        waitsFor (-> cb.callCount > 0), 'save', 1000
+        runs ->
+          expect(cb.mostRecentCall.args[0]).toBeNull()
+          expect(fs.statSync(filename).isDirectory()).toBeFalsy()
 
   describe '#saveMeta', ->
     filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'

@@ -18,7 +18,12 @@ class File
 
   mkdir: (cb) =>
     name = if @isDir then @fullPath() else path.dirname(@fullPath())
-    mkdirp name, cb
+    fs.stat name, (err, stat) =>
+      if stat and stat.isFile()
+        rimraf name, (err) =>
+          mkdirp name, cb
+      else
+        mkdirp name, cb
 
   save: (cb) =>
     @data.pause() if @data instanceof Stream
@@ -27,14 +32,30 @@ class File
       if @isDir
         @saveMeta(cb)
       else
-        file = fs.createWriteStream @fullPath()
-        if @data instanceof Stream
-          @data.pipe(file)
-          @data.resume()
-        else
-          file.end(@data)
-        file.on 'close', =>
-          @saveMeta(cb)
+        @getMeta (err, meta) =>
+          if @meta && meta && @meta.rev == meta.rev
+            # same file rev
+            cb(null)
+          else
+            @_writeFile(cb)
+
+  _writeFile: (cb) =>
+    write = =>
+      file = fs.createWriteStream @fullPath()
+      if @data instanceof Stream
+        @data.pipe(file)
+        @data.resume()
+      else
+        file.end(@data)
+      file.on 'close', =>
+        @saveMeta(cb)
+    fs.stat @fullPath(), (err, stat) =>
+      if stat and stat.isDirectory()
+        rimraf @fullPath(), (err) =>
+          write()
+      else
+        write()
+
 
   saveMeta: (cb) =>
     for key, val of @meta
