@@ -12,7 +12,7 @@ class Scheduler
   run: =>
     @model.all().complete (err, accounts) =>
       if err then throw err
-      async.forEach(accounts, @backup)
+      async.forEachSeries(accounts, @backup)
 
   backup: (account) =>
     account.backup()
