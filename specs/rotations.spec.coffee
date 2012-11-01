@@ -1,8 +1,7 @@
 _ = require('underscore')
-#fs = require('fs')
-#mkdirp = require('mkdirp')
-#rimraf = require('rimraf')
 moment = require('moment')
+
+require('./spec_helper')
 rotations = require('../lib/rotations')
 
 describe 'rotations', ->
