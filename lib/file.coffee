@@ -21,9 +21,10 @@ class File
     fs.stat name, (err, stat) =>
       if stat and stat.isFile()
         rimraf name, (err) =>
-          @added = true
+          @added = true if @isDir
           mkdirp name, cb
       else
+        @added = true if @isDir
         mkdirp name, cb
 
   save: (cb) =>
@@ -38,10 +39,6 @@ class File
             # same file rev
             cb(null)
           else
-            if meta
-              @updated = true
-            else
-              @added = true
             @_writeFile(cb)
 
   _writeFile: (cb) =>
@@ -55,10 +52,12 @@ class File
       file.on 'close', =>
         @saveMeta(cb)
     fs.stat @fullPath(), (err, stat) =>
-      if stat and stat.isDirectory()
+      if stat
+        @updated = true
         rimraf @fullPath(), (err) =>
           write()
       else
+        @added = true
         write()
 
 

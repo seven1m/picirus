@@ -27,7 +27,9 @@ class Rotation
       if err then return cb(err)
       @latest (err, latest) =>
         if err then return cb(err)
-        if latest
+        if latest == @dest()
+          cb('backup already exists for this date')
+        else if latest
           @cp_al latest, @dest(), (err) =>
             cb err, @dest()
         else
@@ -70,7 +72,12 @@ class Rotation
   mkdir: (dest, cb) =>
     fs.mkdir path.join(@path, dest), cb
 
-  remove: rimraf
+  remove: (path, cb) =>
+    fs.exists path, (exists) =>
+      if exists
+        rimraf(path, cb)
+      else
+        cb(null)
 
 
 class GFSRotation extends Rotation
