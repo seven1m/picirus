@@ -1,5 +1,6 @@
 ul.breadcrumb
-  for crumb in browser.breadcrumbs()
+  - breadcrumbs = browser.breadcrumbs()
+  for crumb in breadcrumbs
     li(class=crumb.active && 'active')
       if crumb.active
         = crumb.name

@@ -7,7 +7,7 @@ ExifImage = require('exif').ExifImage
 
 class Browser
 
-  constructor: (@account, @snapshot, @path='/') ->
+  constructor: (@account, @snapshot, @path='') ->
     if @snapshot
       if m = @snapshot.match(/^([^\/]+)\/(.*)$/)
         @snapshot = m[1]
@@ -76,14 +76,14 @@ class Browser
         cb('no backups found')
 
   breadcrumbs: (cb) =>
-    cum = @prettyPathRoot()
+    path = @prettyPathRoot()
     parts = @path.split('/')
     parts.unshift('') unless parts[0] == ''
     for part, i in parts
-      cum += '/' + part
+      path = pathLib.join(path, part)
       {
         name: part || @account.provider
-        path: cum
+        path: path
         active: i == parts.length - 1
       }
 
