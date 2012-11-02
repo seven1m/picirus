@@ -38,16 +38,15 @@ class DropboxPlugin extends BasePlugin
       )
 
   backup: (account, cb) =>
-    console.log 'backing up dropbox', new Date()
-    @snapshot account, (err, snapshot) =>
-      if err then throw err
-      @_backup account, snapshot, (err, cursor) =>
-        @cleanup account, (err) =>
-          if err then throw err
-          account.cursor = cursor
-          account.save().complete (err) =>
-            console.log 'finished backing up dropbox', new Date()
-            if cb then cb(err)
+    models.backup.start account, (err, backup) =>
+      @snapshot account, (err, snapshot) =>
+        if err then throw err
+        @_backup account, snapshot, (err, cursor) =>
+          @cleanup account, (err) =>
+            if err then throw err
+            account.cursor = cursor
+            account.save().complete (err) =>
+              backup.finish(cb)
 
   _backup: (account, snapshot, cb) =>
     @client(account).delta account.cursor, (err, data) =>
