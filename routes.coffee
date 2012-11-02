@@ -30,6 +30,36 @@ module.exports = (app) ->
     ).success (accounts) ->
       res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
+  app.post '/accounts/:provider/:uid/backup', (req, res) ->
+    find req, (err, account) ->
+      if err or not account
+        res.render 'error', error: err || 'account not found'
+      else
+        status = account.backup()
+        if status == true
+          req.flash 'success', "backing up #{account.provider}..."
+        else
+          req.flash 'error', status
+        res.redirect '/accounts'
+
+  app.delete '/accounts/:provider/:uid', (req, res) ->
+    find req, (err, account) ->
+      if err or not account
+        res.render 'error', error: err || 'account not found'
+      else
+        account.destroy().complete (err) ->
+          if err
+            res.render 'error', error: err
+          else
+            res.redirect '/accounts'
+
+  app.get '/accounts/:provider/:uid/delete', (req, res) ->
+    find req, (err, account) ->
+      if err or not account
+        res.render 'error', error: err || 'account not found'
+      else
+        res.render 'remove_account', account: account
+
   app.get /\/accounts\/(\w+)\/([^\/]+)\/?(.*)?/, (req, res) ->
     find req, (err, account) ->
       if err or not account
@@ -66,33 +96,3 @@ module.exports = (app) ->
               res.render 'error', error: err
             else
               res.redirect "/accounts/#{req.params[0]}/#{req.params[1]}/#{snapshot}"
-
-  app.post '/accounts/:provider/:uid/backup', (req, res) ->
-    find req, (err, account) ->
-      if err or not account
-        res.render 'error', error: err || 'account not found'
-      else
-        status = account.backup()
-        if status == true
-          req.flash 'success', "backing up #{account.provider}..."
-        else
-          req.flash 'error', status
-        res.redirect '/accounts'
-
-  app.delete '/accounts/:provider/:uid', (req, res) ->
-    find req, (err, account) ->
-      if err or not account
-        res.render 'error', error: err || 'account not found'
-      else
-        account.destroy().complete (err) ->
-          if err
-            res.render 'error', error: err
-          else
-            res.redirect '/accounts'
-
-  app.get '/accounts/:provider/:uid/delete', (req, res) ->
-    find req, (err, account) ->
-      if err or not account
-        res.render 'error', error: err || 'account not found'
-      else
-        res.render 'remove_account', account: account
