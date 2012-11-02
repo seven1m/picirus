@@ -126,3 +126,8 @@ a i {
   vertical-align: middle;
   margin-right: 10px;
 }
+
+.popover-error .popover-title {
+  background-color: #F2DEDE;
+  color: #B94A48;
+}
