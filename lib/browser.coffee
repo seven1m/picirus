@@ -69,6 +69,7 @@ class Browser
 
   latestSnapshot: (cb) =>
     @snapshots (err, snapshots) =>
+      if err then return cb(err)
       if snapshots.length > 0
         snapshots.sort()
         cb(null, snapshots[snapshots.length-1])

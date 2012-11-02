@@ -30,7 +30,7 @@ module.exports = (app) ->
     ).success (accounts) ->
       res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
-  app.get /\/accounts\/(\w+)\/(\w+)\/?(.*)?/, (req, res) ->
+  app.get /\/accounts\/(\w+)\/([^\/]+)\/?(.*)?/, (req, res) ->
     find req, (err, account) ->
       if err or not account
         res.render 'error', error: err || 'account not found'
@@ -61,6 +61,8 @@ module.exports = (app) ->
         else
           browser.latestSnapshot (err, snapshot) =>
             if err
+              if err.code == 'ENOENT'
+                err = "This account hasn't yet been backed up, so there aren't any files to see yet."
               res.render 'error', error: err
             else
               res.redirect "/accounts/#{req.params[0]}/#{req.params[1]}/#{snapshot}"
