@@ -4,6 +4,17 @@ async = require('async')
 mime = require('mime')
 syntax = require('node-syntaxhighlighter')
 
+cmpFiles = (a, b) =>
+  na = a.name.toLowerCase()
+  nb = b.name.toLowerCase()
+  da = a.isDirectory()
+  db = b.isDirectory()
+  if da and not db then -1     # directories on top
+  else if db and not da then 1
+  else if na < nb then -1      # lowercase alphabetically
+  else if na > nb then 1
+  else 0
+
 class Browser
 
   constructor: (@account, @snapshot, @path='') ->
@@ -31,7 +42,9 @@ class Browser
     if @snapshot
       fs.readdir @fullPath(), (err, list) =>
         if err then return cb(err)
-        async.map list, @statChild, cb
+        async.map list, @statChild, (err, list) =>
+          if list then list.sort cmpFiles
+          cb(err, list)
     else
       @latestSnapshot (err, snapshot) =>
         @snapshot = snapshot
@@ -64,7 +77,9 @@ class Browser
       callback null, stat
 
   snapshots: (cb) =>
-    fs.readdir @rootPath(), cb
+    fs.readdir @rootPath(), (err, list) =>
+      list.sort() if list
+      cb(err, list)
 
   latestSnapshot: (cb) =>
     @snapshots (err, snapshots) =>
