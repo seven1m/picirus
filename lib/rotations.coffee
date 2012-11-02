@@ -68,7 +68,7 @@ class Rotation
         cb(stderr)
 
   mkdir: (dest, cb) =>
-    fs.mkdir dest, cb
+    fs.mkdir path.join(@path, dest), cb
 
   remove: rimraf
 
