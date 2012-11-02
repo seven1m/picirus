@@ -6,7 +6,9 @@ passport = require('passport')
 
 DropboxStrategy = require('passport-dropbox').Strategy
 DropboxClient = require('dropbox-node').DropboxClient
-BasePlugin = require('./base')
+base = require('./base')
+BasePlugin = base.BasePlugin
+PluginBackup = base.PluginBackup
 File = require('../lib/file')
 models = require('../models')
 
@@ -29,58 +31,57 @@ class DropboxPlugin extends BasePlugin
   build: (token, secret, profile, done) =>
     models.account.buildFromOAuth profile, token, secret, done
 
-  client: (account) =>
-    @_clients ?= {}
-    @_clients[account.id] ?=
-      new DropboxClient(
-        CONFIG.keys.dropbox.key, CONFIG.keys.dropbox.secret,
-        account.token, account.secret
-      )
-
   backup: (account, cb) =>
-    models.backup.start account, (err, backup) =>
-      @snapshot account, (err, snapshot) =>
-        if err then throw err
-        @_backup account, snapshot, (err, cursor) =>
-          @cleanup account, (err) =>
-            if err then throw err
-            account.cursor = cursor
-            account.save().complete (err) =>
-              backup.finish(cb)
+    new DropboxBackup(account).run(cb)
 
-  _backup: (account, snapshot, cb) =>
-    @client(account).delta account.cursor, (err, data) =>
-      async.forEachSeries data.entries, _.bind(@_save, @, account, snapshot), (err) =>
+
+class DropboxBackup extends PluginBackup
+
+  constructor: (@account) ->
+    super(@account)
+    @client = new DropboxClient(
+      CONFIG.keys.dropbox.key, CONFIG.keys.dropbox.secret,
+      @account.token, @account.secret
+    )
+
+  backup: (cb) =>
+    @client.delta @account.cursor, (err, data) =>
+      async.forEachSeries data.entries, @save, (err) =>
         if err
           cb(err)
         else if data.has_more
-          @_backup(account, snapshot, cb)
+          @backup(cb)
         else
-          cb(null, data.cursor)
+          @account.cursor = data.cursor
+          @account.save().complete(cb)
 
-  _save: (account, snapshot, path, cb) =>
+  save: (path, cb) =>
     meta = path[1]
     path = path[0]
     if meta
-      stream = !meta.is_dir && @client(account).getFile(path)
-      file = new File account, snapshot, meta.path, meta.is_dir, stream,
+      stream = !meta.is_dir && @client.getFile(path)
+      file = new File @account, @snapshot, meta.path, meta.is_dir, stream,
         rev: meta.rev
       file.save (err) =>
         if err
           console.log "#{path} - error - #{err}"
         else
           console.log "#{path} - saved"
+          @incCount('added') if file.added
+          @incCount('updated') if file.updated
         cb(err)
     else
-      @_findFile account, snapshot, path, (err, actual) =>
+      @findFile path, (err, actual) =>
         console.log "#{path} - removing"
-        file = new File account, snapshot, actual
-        file.delete(cb)
+        file = new File @account, @snapshot, actual
+        @rotation.remove file.fullPath(), (err) =>
+          @incCount('deleted') unless err
+          cb(err)
 
   # cannot remove file when the case is mixed (not lowercase)
   # so we have to find the file first :(
-  _findFile: (account, snapshot, path, cb) =>
-    full = pathLib.join CONFIG.path('account', account), snapshot, path
+  findFile: (path, cb) =>
+    full = pathLib.join CONFIG.path('account', @account), @snapshot, path
     name = pathLib.basename(path)
     fs.readdir pathLib.dirname(full), (err, list) =>
       if err then return cb(err)

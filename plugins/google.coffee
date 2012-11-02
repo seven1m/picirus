@@ -1,7 +1,8 @@
 _ = require('underscore')
 passport = require('passport')
 GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
-BasePlugin = require('./base')
+base = require('./base')
+BasePlugin = base.BasePlugin
 models = require('../models')
 
 class GooglePlugin extends BasePlugin

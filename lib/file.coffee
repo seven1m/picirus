@@ -21,6 +21,7 @@ class File
     fs.stat name, (err, stat) =>
       if stat and stat.isFile()
         rimraf name, (err) =>
+          @added = true
           mkdirp name, cb
       else
         mkdirp name, cb
@@ -37,6 +38,10 @@ class File
             # same file rev
             cb(null)
           else
+            if meta
+              @updated = true
+            else
+              @added = true
             @_writeFile(cb)
 
   _writeFile: (cb) =>

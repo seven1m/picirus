@@ -1,7 +1,8 @@
 _ = require('underscore')
 passport = require('passport')
 FlickrStrategy = require('passport-flickr').Strategy
-BasePlugin = require('./base')
+base = require('./base')
+BasePlugin = base.BasePlugin
 models = require('../models')
 
 class FlickrPlugin extends BasePlugin

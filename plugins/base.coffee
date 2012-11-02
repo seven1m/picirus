@@ -1,22 +1,29 @@
-rimraf = require('rimraf')
+models = require('../models')
 rotations = require('../lib/rotations')
 
-class BasePlugin
+class exports.BasePlugin
 
   redirect: (req, res) =>
     res.redirect '/accounts'
 
-  remove: (path, cb) =>
-    @rotation(account).remove path, cb
 
-  snapshot: (account, cb) =>
-    @rotation(account).snapshot cb
+class exports.PluginBackup
 
-  cleanup: (account, cb) =>
-    @rotation(account).cleanup cb
+  constructor: (@account) ->
+    @path = CONFIG.path('account', @account)
+    @rotation = new rotations.GFSRotation(@path)
 
-  rotation: (account) =>
-    path = CONFIG.path('account', account)
-    new rotations.GFSRotation(path)
+  run: (cb) =>
+    models.backup.start @account, (err, backup) =>
+      @_backup = backup
+      @rotation.snapshot (err, snapshot) =>
+        if err then throw err
+        @snapshot = snapshot
+        @backup (err) =>
+          if err then throw err
+          @rotation.cleanup (err) =>
+            if err then throw err
+            backup.finish(cb)
 
-module.exports = BasePlugin
+  incCount: (which) =>
+    @_backup["#{which}_count"]++
