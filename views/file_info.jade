@@ -20,8 +20,11 @@ block main
         img(src=file.url + '?raw=true')
       else if code
         != code
-      else if file.mime.match(/^text/)
-        iframe(src=file.raw_url)
+      else
+        p
+          a.btn.btn-primary(href=file.raw_url)
+            i.icon-eye-open
+            |  Open File
       table.table
         tbody
           tr
