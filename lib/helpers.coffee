@@ -19,7 +19,8 @@ fileClass = (file) ->
     'icon-file'
 
 timestamp = (time) ->
-  moment(time).format('YYYY-MM-DD hh:mm a')
+  if time and time.getFullYear() > 1969
+    moment(time).format('YYYY-MM-DD hh:mm:ss a')
 
 prettySize = (bytes) ->
   kbytes = bytes / 1024

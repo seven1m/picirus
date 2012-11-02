@@ -32,7 +32,7 @@ block main
                       td(rel='popover-static', data-title='backup error', data-content=account.error, data-placement='left')= account.status
                     else
                       td= account.status
-                    td= account.last_backup.getFullYear() > 1969 && timestamp(account.last_backup) || ''
+                    td= timestamp(account.last_backup)
                     td.actions
                       a.btn(href="/accounts/#{account.provider}/#{account.uid}", title='browse files')
                         i.icon-folder-open
