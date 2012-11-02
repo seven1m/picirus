@@ -1,0 +1,40 @@
+extend layout
+
+block main
+
+  article
+    header
+      .file-controls
+        label Snapshot:
+        select(onchange="location.href='/accounts/#{account.provider}/#{account.uid}/' + this.value")
+          for snapshot in snapshots
+            option(value=snapshot, selected=(snapshot==browser.snapshot && 'selected'))
+              = snapshot
+      h2
+        i.icon-folder-open
+        |  Browsing 
+        = browser.path
+    section
+      include _breadcrumbs
+
+      if files.length > 0
+        table.table
+          thead
+            tr
+              th name
+              th modified
+              th size
+          tbody
+            for file in files
+              tr
+                td
+                  a(href=encodeURI(file.url))
+                    i(class=fileClass(file))
+                    |  
+                    = file.name
+                td= timestamp(file.mtime)
+                td
+                  unless file.isDirectory()
+                    = prettySize(file.size)
+      else
+        .alert.alert-info nothing here

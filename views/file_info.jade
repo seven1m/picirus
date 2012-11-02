@@ -1,0 +1,38 @@
+extend layout
+
+append scripts
+  link(rel='stylesheet', type='text/css', href='/css/code.css')
+
+block main
+
+  article
+    header
+      .file-controls
+        a.btn(href=file.raw_url, title='view raw file')
+          i.icon-eye-open
+      h2
+        i(class=fileClass(file))
+        = file.name
+    section
+      include _breadcrumbs
+
+      if file.mime.match(/^image/)
+        img(src=file.url + '?raw=true')
+      else if code
+        != code
+      else if file.mime.match(/^text/)
+        iframe(src=file.raw_url)
+      table.table
+        tbody
+          tr
+            th modified
+            td= timestamp(file.mtime)
+          tr
+            th size
+            td= prettySize(file.size)
+          tr
+            th mime
+            td
+              = file.mime
+              if file.lang
+                em= file.lang

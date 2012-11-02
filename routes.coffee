@@ -7,11 +7,18 @@ ACCOUNT_TYPES =
   ftp: 'FTP'
   scp: 'SCP'
 
+fs = require('fs')
+syntax = require('node-syntaxhighlighter')
+
+Browser = require('./lib/browser')
 models = require('./models')
 
 module.exports = (app) ->
 
   find = (req, cb) ->
+    if req.params.length
+      req.params.provider = req.params[0]
+      req.params.uid = req.params[1]
     models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete cb
 
   app.get '/', (req, res) ->
@@ -23,13 +30,40 @@ module.exports = (app) ->
     ).success (accounts) ->
       res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
-  app.get '/accounts/:provider/:uid', (req, res) ->
+  app.get /\/accounts\/(\w+)\/(\w+)\/?(.*)?/, (req, res) ->
     find req, (err, account) ->
       if err or not account
         res.render 'error', error: err || 'account not found'
       else
-        account.acctInfo (err, info) ->
-          res.render account.provider, account: account, info: info, error: err
+        browser = new Browser(account, req.params[2])
+        if browser.snapshot
+          browser.stat (err, stat) =>
+            if err
+              res.render 'error', error: err
+            else
+              if stat.isDirectory()
+                browser.snapshots (err, snapshots) =>
+                  browser.list (err, files) =>
+                    if err
+                      res.render 'error', error: err
+                    else
+                      res.render 'folder_list', account: account, browser: browser, files: files, snapshots: snapshots
+              else
+                if req.query.raw
+                  res.sendfile stat.fs_path
+                else
+                  if stat.lang
+                    fs.readFile stat.fs_path, (err, body) =>
+                      code = syntax.highlight(body.toString(), stat.lang)
+                      res.render 'file_info', account: account, browser: browser, file: stat, code: code
+                  else
+                    res.render 'file_info', account: account, browser: browser, file: stat, code: null
+        else
+          browser.latestSnapshot (err, snapshot) =>
+            if err
+              res.render 'error', error: err
+            else
+              res.redirect "/accounts/#{req.params[0]}/#{req.params[1]}/#{snapshot}"
 
   app.post '/accounts/:provider/:uid/backup', (req, res) ->
     find req, (err, account) ->

@@ -1,0 +1,8 @@
+ul.breadcrumb
+  for crumb in browser.breadcrumbs()
+    li(class=crumb.active && 'active')
+      if crumb.active
+        = crumb.name
+      else
+        a(href=crumb.path)= crumb.name
+        span.divider /

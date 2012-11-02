@@ -110,3 +110,19 @@ th.actions, td.actions {
 a i {
   cursor: pointer;
 }
+
+.syntaxhighlighter .container:before,
+.syntaxhighlighter .container:after {
+  content: none;
+}
+
+.file-controls {
+  float: right;
+}
+
+.file-controls label {
+  display: inline-block;
+  height: 25px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
