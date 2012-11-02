@@ -35,6 +35,8 @@ schema =
     type: Sequelize.STRING
   cursor:
     type: Sequelize.STRING
+  last_backup:
+    type: Sequelize.DATE
 
 Account = module.exports = sequelize.define 'account', schema,
   underscored: true
@@ -81,6 +83,7 @@ Account = module.exports = sequelize.define 'account', schema,
               @error = err
             else
               @status = 'idle'
+              @last_backup = new Date()
             res = @save()
             res.complete(cb) if cb
         true
