@@ -22,13 +22,15 @@ module.exports = (app) ->
     models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete cb
 
   app.get '/', (req, res) ->
-    res.render 'dashboard'
+    models.backup.findAll(order: 'started desc', limit: 25).complete (err, backups) ->
+      res.render 'dashboard', backups: backups
 
   app.get '/accounts', (req, res) ->
-    models.account.findAll().error(
-      (e) -> res.render 'error', error: "could not load accounts: #{e}"
-    ).success (accounts) ->
-      res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
+    models.account.findAll().complete (err, accounts) ->
+      if err
+        res.render 'error', error: "could not load accounts: #{e}"
+      else
+        res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
   app.post '/accounts/:provider/:uid/backup', (req, res) ->
     find req, (err, account) ->

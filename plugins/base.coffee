@@ -17,13 +17,19 @@ class exports.PluginBackup
     models.backup.start @account, (err, backup) =>
       @_backup = backup
       @rotation.snapshot (err, snapshot) =>
-        if err then throw err
-        @snapshot = snapshot
-        @backup (err) =>
-          if err then throw err
-          @rotation.cleanup (err) =>
-            if err then throw err
-            backup.finish(cb)
+        if err
+          backup.fail(err, cb)
+        else
+          @snapshot = snapshot
+          @backup (err) =>
+            if err
+              backup.fail(err, cb)
+            else
+              @rotation.cleanup (err) =>
+                if err
+                  backup.fail(err, cb)
+                else
+                  backup.finish(cb)
 
   incCount: (which) =>
     @_backup["#{which}_count"]++

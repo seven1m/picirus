@@ -73,10 +73,14 @@ class DropboxBackup extends PluginBackup
     else
       @findFile path, (err, actual) =>
         console.log "#{path} - removing"
-        file = new File @account, @snapshot, actual
-        @rotation.remove file.fullPath(), (err) =>
-          @incCount('deleted') unless err
-          cb(err)
+        if actual
+          file = new File @account, @snapshot, actual
+          @rotation.remove file.fullPath(), (err) =>
+            @incCount('deleted') unless err
+            cb(err)
+        else
+          @incCount('deleted')
+          cb()
 
   # cannot remove file when the case is mixed (not lowercase)
   # so we have to find the file first :(

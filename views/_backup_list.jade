@@ -1,0 +1,33 @@
+if backups.length > 0
+  table.table
+    thead
+      tr
+        th account
+        th status
+        th added
+        th updated
+        th deleted
+        th start
+        th finish
+    tbody
+      for backup in backups
+        tr
+          td
+            a(href="/accounts/#{backup.provider}/#{backup.uid}")
+              = backup.provider
+          if backup.status == 'error'
+            td(rel='popover', data-title='backup error', data-content=backup.error, data-placement='bottom')
+              = backup.status
+          else
+            td= backup.status
+          td= backup.added_count
+          td= backup.updated_count
+          td= backup.deleted_count
+          td= timestamp(backup.started)
+          td= timestamp(backup.finished)
+
+else
+  .alert.alert-info
+    | You don't have any backups yet. 
+    a(href='/accounts') Add an account
+    |  to get started.
