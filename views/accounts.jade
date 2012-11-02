@@ -29,14 +29,11 @@ block main
                     td= account.email || account.uid
                     td= account.status
                     td.actions
-                      a.btn(href="/accounts/#{account.provider}/#{account.uid}", title='edit this account')
-                        i.icon-pencil
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}", title='browse files')
+                        i.icon-folder-open
                       |  
                       a.btn(href="/accounts/#{account.provider}/#{account.uid}/delete", title='remove this account')
                         i.icon-trash
-                      |  
-                      a.btn(href="/accounts/#{account.provider}/#{account.uid}/backup", data-method='post', title='backup this account now')
-                        i.icon-download
 
           else
             .alert.alert-info

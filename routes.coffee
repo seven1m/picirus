@@ -47,7 +47,7 @@ module.exports = (app) ->
                     if err
                       res.render 'error', error: err
                     else
-                      res.render 'folder_list', account: account, browser: browser, files: files, snapshots: snapshots
+                      res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots
               else
                 if req.query.raw
                   res.sendfile stat.fs_path
@@ -55,9 +55,9 @@ module.exports = (app) ->
                   if stat.lang
                     fs.readFile stat.fs_path, (err, body) =>
                       code = syntax.highlight(body.toString(), stat.lang)
-                      res.render 'file_info', account: account, browser: browser, file: stat, code: code
+                      res.render 'file', account: account, browser: browser, file: stat, code: code
                   else
-                    res.render 'file_info', account: account, browser: browser, file: stat, code: null
+                    res.render 'file', account: account, browser: browser, file: stat, code: null
         else
           browser.latestSnapshot (err, snapshot) =>
             if err
