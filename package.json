@@ -28,7 +28,8 @@
     "async": ">= 0.1.22",
     "rimraf": "2.0.x",
     "mime": "1.2.x",
-    "node-syntaxhighlighter": "0.8.x"
+    "node-syntaxhighlighter": "0.8.x",
+    "moment": "1.7.x"
   },
   "devDependencies": {
     "jasmine-node": "*"

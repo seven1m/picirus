@@ -3,7 +3,6 @@ pathLib = require('path')
 async = require('async')
 mime = require('mime')
 syntax = require('node-syntaxhighlighter')
-ExifImage = require('exif').ExifImage
 
 class Browser
 
