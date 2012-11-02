@@ -17,7 +17,8 @@ block main
       include _breadcrumbs
 
       if file.mime.match(/^image/)
-        img(src=file.url + '?raw=true')
+        p
+          img(src=file.url + '?raw=true')
       else if code
         != code
       else
