@@ -5,12 +5,12 @@ rimraf = require('rimraf')
 
 require('./spec_helper')
 Account = require('../models/account')
-DropboxPlugin = require('../plugins/dropbox')
+DropboxBackup = require('../plugins/dropbox').DropboxBackup
 
-describe DropboxPlugin, ->
+describe DropboxBackup, ->
 
   root = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo'
-  plugin = null
+  backup = null
   account = Account.build
     provider: 'dropbox'
     uid: '1234'
@@ -18,16 +18,17 @@ describe DropboxPlugin, ->
   beforeEach ->
     rimraf.sync(root)
     mkdirp.sync(root)
-    plugin = new DropboxPlugin
+    backup = new DropboxBackup(account)
+    backup.snapshot = '2012-10-31'
 
-  describe '#_findFile', ->
+  describe '#findFile', ->
 
     describe 'given no file is present', ->
 
       it 'calls the callback with an error', ->
         cb = jasmine.createSpy('cb')
         runs ->
-          plugin._findFile account, '2012-10-31', 'foo/baz', cb
+          backup.findFile 'foo/baz', cb
         waitsFor (-> cb.callCount > 0), '_findFile', 1000
         runs ->
           expect(cb.mostRecentCall.args[0]).toEqual('not found')
@@ -40,7 +41,7 @@ describe DropboxPlugin, ->
       it 'calls the callback with the filename', ->
         cb = jasmine.createSpy('cb')
         runs ->
-          plugin._findFile account, '2012-10-31', 'foo/baz', cb
+          backup.findFile 'foo/baz', cb
         waitsFor (-> cb.callCount > 0), '_findFile', 1000
         runs ->
           expect(cb.mostRecentCall.args[0]).toBeNull()
@@ -54,7 +55,7 @@ describe DropboxPlugin, ->
       it 'calls the callback with the filename', ->
         cb = jasmine.createSpy('cb')
         runs ->
-          plugin._findFile account, '2012-10-31', 'foo/baz', cb
+          backup.findFile 'foo/baz', cb
         waitsFor (-> cb.callCount > 0), '_findFile', 1000
         runs ->
           expect(cb.mostRecentCall.args[0]).toBeNull()

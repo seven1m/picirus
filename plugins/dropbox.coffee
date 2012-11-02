@@ -96,3 +96,4 @@ class DropboxBackup extends PluginBackup
 
 
 module.exports = DropboxPlugin
+DropboxPlugin.DropboxBackup = DropboxBackup
