@@ -1,5 +1,6 @@
 require('../db')
 Sequelize = require('sequelize')
+Account = require('./account')
 
 schema =
   account_id:
@@ -49,24 +50,36 @@ Backup = module.exports = sequelize.define 'backup', schema,
         uid: account.uid
         started: date
         status: 'busy'
-      cb(null, backup)
+      account.status = 'busy'
+      account.error = ''
+      account.save().complete (err) =>
+        cb(null, backup)
 
   instanceMethods:
     fail: (err, cb) ->
-      date = new Date()
-      console.log "error backing up #{@provider} #{@uid} - #{err}", date
-      @finished = date
-      @status = 'error'
-      @error = err
-      res = @save()
-      if cb
-        res.complete =>
-          cb(err)
+      Account.find(@account_id).complete (err, account) =>
+        date = new Date()
+        console.log "error backing up #{@provider} #{@uid} - #{err}", date
+        account.status = 'idle'
+        account.error = err
+        account.save()
+        @finished = date
+        @status = 'error'
+        @error = err
+        res = @save()
+        if cb
+          res.complete =>
+            cb(err)
 
     finish: (cb) ->
-      date = new Date()
-      console.log "finished backing up #{@provider} #{@uid}", date
-      @finished = date
-      @status = 'success'
-      res = @save()
-      res.complete(cb) if cb
+      Account.find(@account_id).complete (err, account) =>
+        date = new Date()
+        console.log "finished backing up #{@provider} #{@uid}", date
+        account.status = 'idle'
+        account.error = ''
+        account.last_backup = date
+        account.save()
+        @finished = date
+        @status = 'success'
+        res = @save()
+        res.complete(cb) if cb

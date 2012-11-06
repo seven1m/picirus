@@ -29,7 +29,12 @@ class DropboxPlugin extends BasePlugin
   auth: passport.authorize('dropbox-authz')
 
   build: (token, secret, profile, done) =>
-    models.account.buildFromOAuth profile, token, secret, done
+    models.account.buildFromOAuth profile, token, secret, (err, account) =>
+      if err
+        done(err)
+      else
+        @backup(account)
+        done(null, account)
 
   backup: (account, cb) =>
     new DropboxBackup(account).run(cb)

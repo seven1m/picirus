@@ -70,22 +70,3 @@ Account = module.exports = sequelize.define 'account', schema,
         @email = emails[0]
       else if profile.email
         @email = email
-
-    backup: (cb) ->
-      if (p = plugins[@provider]) and p.backup
-        if cb then cb(null)
-        @status = 'busy'
-        @error = ''
-        @save().complete (err) =>
-          p.backup this, (err) =>
-            if err
-              @status = 'error'
-              @error = err
-            else
-              @status = 'idle'
-              @last_backup = new Date()
-            res = @save()
-            res.complete(cb) if cb
-        true
-      else
-        'provider not supported for backup'
