@@ -33,6 +33,10 @@ app.configure ->
   app.use require('connect-flash')()
   app.use helpers
   app.use app.router
+  app.use (req, res, next) ->
+    if req.url.match(/^\/(css|js|images|font)/)
+      res.setHeader "Cache-Control", "public, max-age=345600"
+    next()
   app.use express.static(path.join(__dirname, 'public'))
 
 app.configure 'development', ->
