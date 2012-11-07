@@ -8,7 +8,7 @@ Stream = require('stream').Stream
 require('./spec_helper')
 File = require('../lib/file')
 
-describe File, ->
+describe 'File', ->
   account = null
   file = null
 

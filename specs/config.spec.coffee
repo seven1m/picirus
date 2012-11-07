@@ -1,6 +1,6 @@
 Config = require('../lib/config')
 
-describe Config, ->
+describe 'Config', ->
   config = null
 
   beforeEach ->

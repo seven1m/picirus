@@ -7,7 +7,7 @@ require('./spec_helper')
 Account = require('../models/account')
 DropboxBackup = require('../plugins/dropbox').DropboxBackup
 
-describe DropboxBackup, ->
+describe 'DropboxBackup', ->
 
   root = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo'
   backup = null
