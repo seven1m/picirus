@@ -22,9 +22,6 @@ $(function() {
       title: {
         text: 'Daily Backup Stats'
       },
-      //subtitle: {
-        //text: 'Source: WorldClimate.com'
-      //},
       xAxis: {
         categories: data.categories
       },

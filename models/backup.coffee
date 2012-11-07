@@ -77,7 +77,10 @@ Backup = module.exports = sequelize.define 'backup', schema,
           by_date[stat.date] = stat
           delete stat.date
           for key, val of stat
-            series[key] = {name: key, data: []}
+            series[key] =
+              name: key
+              data: []
+              color: {added: 'green', updated: 'orange', deleted: 'red'}[key]
         for date in dates
           stat = by_date[date]
           for key of series
