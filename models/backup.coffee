@@ -2,6 +2,8 @@ require('../db')
 Sequelize = require('sequelize')
 Account = require('./account')
 
+moment = require('moment')
+
 schema =
   account_id:
     type: Sequelize.INTEGER
@@ -54,6 +56,36 @@ Backup = module.exports = sequelize.define 'backup', schema,
       account.error = ''
       account.save().complete (err) =>
         cb(null, backup)
+
+    stats: (cb) ->
+      start = moment().subtract('days', 30)
+      dates = for i in [0..30]
+        start.clone().add('days', i).format('YYYY-MM-DD')
+      sequelize.query(
+        "select sum(added_count) as added,
+                sum(updated_count) as updated,
+                sum(deleted_count) as deleted,
+                strftime('%Y-%m-%d', finished) as date
+           from backups
+       group by strftime('%Y-%m-%d', finished)
+         having strftime('%Y-%m-%d', finished) >= '#{start.format('YYYY-MM-DD')}'
+       order by strftime('%Y-%m-%d', finished) desc;", null, raw: true
+      ).complete (err, stats) ->
+        by_date = {}
+        series = {}
+        for stat in stats
+          by_date[stat.date] = stat
+          delete stat.date
+          for key, val of stat
+            series[key] = {name: key, data: []}
+        for date in dates
+          stat = by_date[date]
+          for key of series
+            series[key].data.push(stat && stat[key] || 0)
+        cb err,
+          categories: (d.split('-')[2] for d in dates)
+          series: (v for k, v of series)
+
 
   instanceMethods:
     fail: (err, cb) ->

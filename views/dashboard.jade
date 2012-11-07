@@ -1,9 +1,18 @@
 extend layout
 
+append scripts
+  script(src='/js/highcharts.js')
+  script(src='/js/dashboard.js')
+
 block main
 
   .row
+    .span8
+      #chart-daily
+    .span4
+      #chart-storage
 
+  .row.push-down
     .span12
       article
         header

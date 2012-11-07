@@ -13,6 +13,7 @@ Paginator = require('paginator')
 
 Browser = require('./lib/browser')
 models = require('./models')
+util = require('./lib/util')
 
 module.exports = (app) ->
 
@@ -28,8 +29,16 @@ module.exports = (app) ->
       models.backup.all(order: 'started desc', offset: paginator.skip, limit: paginator.limit).complete (err, backups) ->
         res.render 'dashboard', backups: backups, paginator: paginator
 
+  app.get '/stats/backups', (req, res) ->
+    models.backup.stats (err, stats) ->
+      res.json stats
+
+  app.get '/stats/storage', (req, res) ->
+    util.storageStats (err, stats) ->
+      res.json stats
+
   app.get '/accounts', (req, res) ->
-    models.account.findAll().complete (err, accounts) ->
+    models.account.all().complete (err, accounts) ->
       if err
         res.render 'error', error: "could not load accounts: #{e}"
       else
