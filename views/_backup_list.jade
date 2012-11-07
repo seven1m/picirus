@@ -25,6 +25,7 @@ if backups.length > 0
           td= backup.deleted_count
           td= timestamp(backup.started)
           td= timestamp(backup.finished)
+  p!= paginator.pageLinks()
 
 else
   .alert.alert-info

@@ -9,6 +9,7 @@ ACCOUNT_TYPES =
 
 fs = require('fs')
 syntax = require('node-syntaxhighlighter')
+Paginator = require('paginator')
 
 Browser = require('./lib/browser')
 models = require('./models')
@@ -22,8 +23,10 @@ module.exports = (app) ->
     models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete cb
 
   app.get '/', (req, res) ->
-    models.backup.findAll(order: 'started desc', limit: 25).complete (err, backups) ->
-      res.render 'dashboard', backups: backups
+    models.backup.count().complete (err, count) ->
+      paginator = new Paginator perPage: 10, page: req.query.page, count: count
+      models.backup.all(order: 'started desc', offset: paginator.skip, limit: paginator.limit).complete (err, backups) ->
+        res.render 'dashboard', backups: backups, paginator: paginator
 
   app.get '/accounts', (req, res) ->
     models.account.findAll().complete (err, accounts) ->

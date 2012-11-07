@@ -30,7 +30,8 @@
     "rimraf": "2.0.x",
     "mime": "1.2.x",
     "node-syntaxhighlighter": "0.8.x",
-    "moment": "1.7.x"
+    "moment": "1.7.x",
+    "paginator": "git://github.com/seven1m/paginator.git"
   },
   "devDependencies": {
     "jasmine-node": "*"
