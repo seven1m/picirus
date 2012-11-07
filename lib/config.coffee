@@ -12,6 +12,8 @@ class Config
 
   path: (name, obj) =>
     if p = @paths[name]
+      p = p.replace /\$(\w+)/g, (m, name) =>
+        @path(name)
       p = if p.indexOf('/') == 0
         p
       else

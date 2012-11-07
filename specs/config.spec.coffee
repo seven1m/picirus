@@ -41,3 +41,14 @@ describe Config, ->
           provider: 'dropbox'
           uid: '1234'
         expect(config.path('account', obj)).toEqual('/data/dropbox-1234/')
+
+    describe 'given a path with config variable', ->
+      beforeEach ->
+        config.paths.backup_root = '/backup'
+        config.paths.account = '$backup_root/:provider-:uid/'
+
+      it 'returns the path with variable interpolated', ->
+        obj =
+          provider: 'dropbox'
+          uid: '1234'
+        expect(config.path('account', obj)).toEqual('/backup/dropbox-1234/')

@@ -14,7 +14,8 @@
     }
   },
   "paths": {
-    "account": "backup/:provider-:uid/",
+    "backup_root": "backup",
+    "account": "$backup_root/:provider-:uid",
     "database": "data.sqlite3"
   }
 }
