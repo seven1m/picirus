@@ -39,6 +39,10 @@ block main
                       |  
                       a.btn(href="/accounts/#{account.provider}/#{account.uid}/delete", title='remove this account')
                         i.icon-remove
+                      |  
+                      a.btn(href="/accounts/#{account.provider}/#{account.uid}/backup", data-method='post', title='backup this account now')
+                        i.icon-download
+
 
           else
             .alert.alert-info
