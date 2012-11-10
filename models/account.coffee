@@ -70,3 +70,9 @@ Account = module.exports = sequelize.define 'account', schema,
         @email = emails[0]
       else if profile.email
         @email = email
+
+    lastBackup: ->
+      if @last_backup?.getTime() == 0
+        null
+      else
+        @last_backup
