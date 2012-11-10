@@ -14,6 +14,7 @@ Paginator = require('paginator')
 Browser = require('./lib/browser')
 models = require('./models')
 util = require('./lib/util')
+plugins = require('./plugins')
 
 module.exports = (app) ->
 
@@ -49,12 +50,8 @@ module.exports = (app) ->
       if err or not account
         res.render 'error', error: err || 'account not found'
       else
-        status = account.backup()
-        if status == true
-          req.flash 'success', "backing up #{account.provider}..."
-        else
-          req.flash 'error', status
-        res.redirect '/accounts'
+        plugins[account.provider].backup account, (err) ->
+        req.flash 'success', "backing up #{account.provider}..."
 
   app.delete '/accounts/:provider/:uid', (req, res) ->
     find req, (err, account) ->
