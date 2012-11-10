@@ -50,8 +50,13 @@ module.exports = (app) ->
       if err or not account
         res.render 'error', error: err || 'account not found'
       else
-        plugins[account.provider].backup account, (err) ->
-        req.flash 'success', "backing up #{account.provider}..."
+        plugin = plugins[account.provider]
+        if plugin.backup?
+          plugin.backup account, (err) ->
+          req.flash 'success', "backing up #{account.provider}..."
+        else
+          req.flash 'error', "backing up #{account.provider} not supported yet"
+      res.redirect '/accounts'
 
   app.delete '/accounts/:provider/:uid', (req, res) ->
     find req, (err, account) ->

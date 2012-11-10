@@ -23,6 +23,7 @@
     "passport-dropbox": "0.1.x",
     "passport-flickr": "0.1.x",
     "passport-google-oauth": "0.1.x",
+    "passport-oauth": "0.1.x",
     "cron": "git://github.com/ncb000gt/node-cron.git#1cef12d7",
     "xattr": "0.9.x",
     "mkdirp": "0.3.x",

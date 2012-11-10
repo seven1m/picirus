@@ -92,9 +92,9 @@ Backup = module.exports = sequelize.define 'backup', schema,
 
   instanceMethods:
     fail: (err, cb) ->
+      date = new Date()
+      console.log "error backing up #{@provider} #{@uid} - #{err}", date
       Account.find(@account_id).complete (err, account) =>
-        date = new Date()
-        console.log "error backing up #{@provider} #{@uid} - #{err}", date
         account.status = 'idle'
         account.error = err
         account.save()
