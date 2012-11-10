@@ -1,14 +1,18 @@
 _ = require('underscore')
 passport = require('passport')
-FlickrStrategy = require('passport-flickr').Strategy
-base = require('./base')
 async = require('async')
+http = require('http')
+
+FlickrStrategy = require('passport-flickr').Strategy
+FlickrClient = require('flickr-with-uploads').Flickr;
+
+base = require('./base')
+models = require('../models')
+
 BasePlugin = base.BasePlugin
 PluginBackup = base.PluginBackup
-models = require('../models')
-FlickrClient = require('flickr-with-uploads').Flickr;
 File = require('../lib/file')
-http = require('http')
+Symlink = require('../lib/symlink')
 
 class FlickrPlugin extends BasePlugin
 
@@ -49,7 +53,6 @@ class FlickrBackup extends PluginBackup
       this.createRequest(method, params, true, cb).send()
 
   backup: (cb) =>
-
     @client.get 'flickr.people.getPhotos', {'user_id': @account.uid, 'extras': 'description, date_upload, tags'}, (err, data) =>        
       if err or not data?.photos?.photo?
         cb(err)
@@ -70,6 +73,8 @@ class FlickrBackup extends PluginBackup
 
       http.get url, (res) =>
 
+        console.log photo
+        
         path = "photos/#{photo.id}.jpg"
 
         file = new File @account, @snapshot, path, false, res,
@@ -83,7 +88,23 @@ class FlickrBackup extends PluginBackup
             console.log "#{path} - saved"
             @incCount('added') if file.added
             @incCount('updated') if file.updated
+
+            if photo.tags?
+              tags = photo.tags.split ' '
+              for tag in tags
+                @symlink path, "tags/#{tag}"
+
           cb(err)          
+
+  symlink: (path, newDir) =>
+    newPath = path.replace /^photos/, newDir
+    symlink = new Symlink @account, @snapshot, path, newPath
+    symlink.save (err) =>
+      if err
+        console.log "#{newPath} - error - #{err}"
+      else
+        console.log "#{newPath} - symlink saved"
+
 
 module.exports = FlickrPlugin
 FlickrPlugin.FlickrBackup = FlickrBackup
