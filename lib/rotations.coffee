@@ -28,7 +28,8 @@ class Rotation
       @latest (err, latest) =>
         if err then return cb(err)
         if latest == @dest()
-          cb('backup already exists for this date')
+          #cb('backup already exists for this date')
+          cb err, @dest()
         else if latest
           @cp_al latest, @dest(), (err) =>
             cb err, @dest()
