@@ -7,6 +7,7 @@
     "flickr": {
       "key": "54d93fd1c781a9a01a0c8fb6ec5bbf90",
       "secret": "e6939da141b95d41"
+
     },
     "google": {
       "client_id": "205477691077.apps.googleusercontent.com",
@@ -15,6 +16,11 @@
     "auth-proxy": {
       "client_id": "b290de86e0a37ec92a6984b9fb668da2e758a1cd",
       "client_secret": "18c48829cf2c8fa694e882ce5c4c15ea40dd801a"
+    }
+  },
+  "options" : {
+    "flickr": {
+      "static_url" : "http://farm{:farm}.staticflickr.com/{:server}/{:id}_{:secret}.jpg"
     }
   },
   "paths": {

@@ -10,6 +10,17 @@ class Config
     for key, val of @config
       @[key] = val
 
+  option: (provider, name, obj) =>
+    if @options[provider] && p = @options[provider][name]
+      if obj
+        p = p.replace /\{:(\w+)\}/g, (m, name) =>          
+          obj[name]
+      else
+        @options[provider][name]
+      p
+    else
+      throw "cannot find option for #{provider} #{name} in config."
+
   path: (name, obj) =>
     if p = @paths[name]
       p = p.replace /\$(\w+)/g, (m, name) =>
