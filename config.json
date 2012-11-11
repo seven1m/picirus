@@ -12,6 +12,10 @@
       "client_id": "205477691077.apps.googleusercontent.com",
       "client_secret": "pNDoD_WXfp5Ylg5gKJtpJJ5q"
     },
+    "facebook": {
+      "client_id": "382968371789326",
+      "client_secret": "132b54bc27f56fc2af55d4adfbbfe507"
+    },
     "auth-proxy": {
       "client_id": "b290de86e0a37ec92a6984b9fb668da2e758a1cd",
       "client_secret": "18c48829cf2c8fa694e882ce5c4c15ea40dd801a"

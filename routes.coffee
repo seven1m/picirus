@@ -2,6 +2,7 @@ ACCOUNT_TYPES =
   dropbox: 'Dropbox'
   flickr: 'Flickr'
   google: 'Gmail'
+  facebook: 'Facebook'
   imap: 'IMAP'
   pop3: 'POP3'
   ftp: 'FTP'
