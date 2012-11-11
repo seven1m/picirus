@@ -1,0 +1,25 @@
+extend layout
+
+block main
+  .row
+    .offset3.span6
+      article.push-down
+        header
+          h2
+            i.icon-lock
+            | Login Information
+        section
+          p
+            | Username: 
+            strong picirus-dev
+          a.btn.btn-success(href="/accounts")
+            |  Change Password            
+        header
+          h2
+            i.icon-hdd
+            | External hard
+        section
+          p
+            | Use an external harddrive
+          a.btn.btn-success(href="/accounts")
+            |  Set up

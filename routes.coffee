@@ -46,6 +46,9 @@ module.exports = (app) ->
       else
         res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
+  app.get '/settings', (req, res) ->
+    res.render 'settings_page'
+  
   app.post '/accounts/:provider/:uid/backup', (req, res) ->
     find req, (err, account) ->
       if err or not account
