@@ -1,7 +1,6 @@
 /* color palette: "safeword" (http://www.colourlovers.com/palette/299662/safeword) by jimmyjames
-   #C54B2C = red
-   #D89845 = tan
-   #11BAAC = blue
+   #930    = red/orange
+   #2FA4E7 = blue
 */
 
 body {
@@ -10,7 +9,7 @@ body {
 }
 
 a {
-  color: #C54B2C;
+  color: #930;
 }
 
 .navbar .nav > li > a {
@@ -18,7 +17,7 @@ a {
 }
 
 .navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
-  color: #C54B2C;
+  color: #930;
 }
 
 nav .brand img {
@@ -27,7 +26,7 @@ nav .brand img {
 }
 
 nav .brand a {
-  color: #11BAAC;
+  color: #2FA4E7;
 }
 
 #main {
@@ -71,7 +70,7 @@ h3 {
 }
 
 h2 strong, h3 strong {
-  color: #C54B2C;
+  color: #930;
 }
 
 ul.icons {
