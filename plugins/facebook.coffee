@@ -4,6 +4,7 @@ passport = require('passport')
 FacebookStrategy = require('passport-facebook').Strategy
 graph = require('fbgraph')
 https = require('https')
+url = require('url')
 
 base = require('./base')
 BasePlugin = base.BasePlugin
@@ -40,38 +41,46 @@ class FacebookBackup extends PluginBackup
     @client = graph
     @client.setAccessToken(@account.token)
     @until = null
+    @since = null
 
   backup: (cb) =>
     params = {}
-    params.until = @until if @until
+    if @until
+      params.until = @until
+    else if @account.cursor # FIXME does FB return the first batch 'since', or the last batch 'since'?
+      params.since = @account.cursor
     @client.get 'me/feed', params, (err, res) =>
-      async.forEachSeries res.data, @save, (err) =>
-        if next = res.paging?.next
-          for pair in next.split('&')
-            parts = pair.split('=')
-            if parts[0] == 'until'
-              @until = parts[1]
-          if @until
-            process.nextTick => @backup(cb)
-
-    #@client.delta @account.cursor, (err, data) =>
-      #async.forEachSeries data.entries, @save, (err) =>
-        #if err
-          #cb(err)
-        #else if data.has_more
-          #@backup(cb)
-        #else
-          #@account.cursor = data.cursor
-          #@account.save().complete(cb)
+      if err
+        cb(err)
+      else
+        # FIXME I think some pages will have zero data length, but we should still query for the next page
+        if res.data and res.data.length > 0
+          async.forEachSeries res.data, @save, (err) =>
+            if err
+              cb(err)
+            else
+              if not @since
+                @since = @_findParam(res.paging?.previous, 'since')
+              if @until = @_findParam(res.paging?.next, 'until')
+                process.nextTick => @backup(cb)
+              else
+                @finish(cb)
+        else
+          @finish(cb)
 
   save: (data, cb) =>
     if data.type == 'photo'
       @client.get data.object_id, (err, res) =>
         if err
-          cb(err)
+          if err.code == 100 # just a bad image, skip it
+            cb()
+          else
+            cb(err)
         else
-          https.get res.source, (res) =>
-            path = "photos/#{data.object_id}.jpg"
+          console.log "retrieving #{data.object_id}..."
+          path = "photos/#{data.object_id}.jpg"
+          uri = url.parse(res.source)
+          req = https.request host: uri.host, port: uri.port, path: uri.path, (res) =>
             file = new File @account, @snapshot, path, false, res, rev: data.updated_time
             file.save (err) =>
               if err
@@ -80,36 +89,32 @@ class FacebookBackup extends PluginBackup
                 console.log "#{path} - saved"
                 @incCount('added') if file.added
                 @incCount('updated') if file.updated
+              req.destroy() # FIXME this doesn't seem right, but the timeout fires if we don't destroy the req
               cb(err)
+          req.setTimeout 10000, =>
+            data.fail_count ?= 0
+            console.log "timeout trying to retrieve Facebook photo (#{data.fail_count} failures): #{path}"
+            req.destroy()
+            if data.fail_count < 5
+              data.fail_count++
+              @save(data, cb)
+            else
+              cb("timeout trying to retreive photo #{path}")
+          req.end()
     else
       cb()
 
-  #save: (path, cb) =>
-    #meta = path[1]
-    #path = path[0]
-    #if meta
-      #stream = !meta.is_dir && @client.getFile(path)
-      #file = new File @account, @snapshot, meta.path, meta.is_dir, stream,
-        #rev: meta.rev
-      #file.save (err) =>
-        #if err
-          #console.log "#{path} - error - #{err}"
-        #else
-          #console.log "#{path} - saved"
-          #@incCount('added') if file.added
-          #@incCount('updated') if file.updated
-        #cb(err)
-    #else
-      #@findFile path, (err, actual) =>
-        #console.log "#{path} - removing"
-        #if actual
-          #file = new File @account, @snapshot, actual
-          #@rotation.remove file.fullPath(), (err) =>
-            #@incCount('deleted') unless err
-            #cb(err)
-        #else
-          #@incCount('deleted')
-          #cb()
+  finish: (cb) =>
+    @account.cursor = @since
+    @account.save().complete(cb)
+
+  _findParam: (url, name) =>
+    if url
+      for pair in url.split('&')
+        parts = pair.split('=')
+        if parts[0] == name
+          return parts[1]
+
 
 module.exports = FacebookPlugin
 FacebookPlugin.FacebookBackup = FacebookBackup
