@@ -68,7 +68,7 @@ class File
     cb ?= _.identity
     for key, val of @meta
       xattr.set @fullPath(), "user.#{key}", val
-    if @meta.updated
+    if @meta?.updated
       fs.utimes @fullPath(), new Date(), moment(@meta.updated).toDate(), =>
         cb(null)
     else
