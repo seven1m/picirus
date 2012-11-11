@@ -42,6 +42,7 @@ cmpFilesSize = (a, b) =>
 META_PATTERN = /\.meta\.json$/
 EXTENDED_VIEWS =
   facebook: ['plugins/facebook/comments']
+  flickr: ['plugins/generic/metadata']
 
 class Browser
 

@@ -1,0 +1,15 @@
+if Object.keys(meta).length > 0
+  h3 Details
+
+  table.table
+    tbody
+      for val, key in meta
+        tr
+          th 
+            = key
+          td
+            if typeof val == 'array'
+              = val.join(', ')
+            else
+              = val
+
