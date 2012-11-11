@@ -1,7 +1,6 @@
 fs = require('fs')
 path = require('path')
 rimraf = require('rimraf')
-xattr = require('xattr')
 mkdirp = require('mkdirp')
 Stream = require('stream').Stream
 
@@ -113,7 +112,7 @@ describe 'File', ->
       beforeEach ->
         mkdirp.sync(path.dirname(filename))
         fs.writeFileSync(filename, 'old contents')
-        xattr.set filename, 'user.rev', '12345'
+        fs.writeFileSync(filename + '.meta.json', '{"rev":"12345"}')
         file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
           rev: '12345'
 
@@ -148,16 +147,16 @@ describe 'File', ->
         url: 'http://example.com/foo/bar'
         rev: '1234'
 
-    it 'writes xattrs', ->
+    it 'writes meta to meta.json', ->
       list = null
       runs ->
         file.saveMeta ->
-          list = xattr.list(filename)
+          list = JSON.parse(fs.readFileSync(filename + '.meta.json'))
       waitsFor (-> list), 'list', 1000
       runs ->
         expect(list).toEqual
-          'user.url': 'http://example.com/foo/bar'
-          'user.rev': '1234'
+          'url': 'http://example.com/foo/bar'
+          'rev': '1234'
 
   describe '#exists', ->
     filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'

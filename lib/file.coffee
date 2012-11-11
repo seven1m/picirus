@@ -4,7 +4,6 @@ _ = require('underscore')
 Stream = require('stream').Stream
 fs = require('fs')
 path = require('path')
-xattr = require('xattr')
 mkdirp = require('mkdirp')
 rimraf = require('rimraf')
 moment = require('moment')
@@ -17,6 +16,9 @@ class File
     if @path.match(/\.\./)
       throw 'cannot be a relative path'
     path.join CONFIG.path('account', @account), @snapshot, @path
+
+  metaPath: =>
+    @fullPath() + '.meta.json'
 
   mkdir: (cb) =>
     name = if @isDir then @fullPath() else path.dirname(@fullPath())
@@ -66,19 +68,26 @@ class File
 
   saveMeta: (cb) =>
     cb ?= _.identity
-    for key, val of @meta
-      xattr.set @fullPath(), "user.#{key}", val
-    if @meta?.updated
-      fs.utimes @fullPath(), new Date(), moment(@meta.updated).toDate(), =>
-        cb(null)
-    else
-      cb(null)
+    fs.writeFile @metaPath(), JSON.stringify(@meta), (err) =>
+      if err
+        cb(err)
+      else
+        if @meta?.updated
+          fs.utimes @fullPath(), new Date(), moment(@meta.updated).toDate(), =>
+            cb(null)
+        else
+          cb(null)
 
   getMeta: (cb) =>
-    meta = {}
-    for key, val of xattr.list(@fullPath())
-      meta[key.replace(/^user\./, '')] = val
-    cb null, meta
+    fs.stat @metaPath(), (err, stat) =>
+      if stat
+        fs.readFile @metaPath(), (err, data) =>
+          if not err and data
+            cb null, JSON.parse(data.toString())
+          else
+            cb null
+      else
+        cb null
 
   delete: (cb) =>
     rimraf @fullPath(), cb
