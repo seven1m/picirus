@@ -38,3 +38,6 @@ block main
             th type
             td
               = file.mime
+      if partials = browser.extendedViews()
+        for p in partials
+          != partial(p, {meta: meta})

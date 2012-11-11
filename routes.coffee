@@ -12,6 +12,7 @@ fs = require('fs')
 syntax = require('node-syntaxhighlighter')
 Paginator = require('paginator')
 
+File = require('./lib/file')
 Browser = require('./lib/browser')
 models = require('./models')
 util = require('./lib/util')
@@ -88,27 +89,28 @@ module.exports = (app) ->
         browser = new Browser(account, req.params[2])
         if browser.snapshot
           browser.stat (err, stat) =>
-            if err
-              res.render 'error', error: err
-            else
-              if stat.isDirectory()
-                browser.snapshots (err, snapshots) =>
-                  sort = req.query.sort || 'name'
-                  browser.list sort, (err, files) =>
-                    if err
-                      res.render 'error', error: err
-                    else
-                      res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots, sort: sort
+            browser.meta (err, meta) =>
+              if err
+                res.render 'error', error: err
               else
-                if req.query.raw
-                  res.sendfile stat.fs_path
+                if stat.isDirectory()
+                  browser.snapshots (err, snapshots) =>
+                    sort = req.query.sort || 'name'
+                    browser.list sort, (err, files) =>
+                      if err
+                        res.render 'error', error: err
+                      else
+                        res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots, sort: sort
                 else
-                  if stat.lang
-                    fs.readFile stat.fs_path, (err, body) =>
-                      code = syntax.highlight(body.toString(), stat.lang)
-                      res.render 'file', account: account, browser: browser, file: stat, code: code
+                  if req.query.raw
+                    res.sendfile stat.fs_path
                   else
-                    res.render 'file', account: account, browser: browser, file: stat, code: null
+                    if stat.lang
+                      fs.readFile stat.fs_path, (err, body) =>
+                        code = syntax.highlight(body.toString(), stat.lang)
+                        res.render 'file', account: account, browser: browser, file: stat, code: code, meta: meta
+                    else
+                      res.render 'file', account: account, browser: browser, file: stat, code: null, meta: meta
         else
           browser.latestSnapshot (err, snapshot) =>
             if err

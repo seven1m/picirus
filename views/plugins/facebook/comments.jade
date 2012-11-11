@@ -1,0 +1,25 @@
+h3 Facebook Details
+
+table.table
+  tbody
+    tr
+      th likes
+      td
+        if meta.likes && meta.likes.data
+          = _.pluck(meta.likes.data, 'name').join(', ')
+        else
+          em none
+    tr
+      th comments
+      td
+        if meta.comments && meta.comments.data
+          for comment in meta.comments.data
+            p.clear
+              img.avatar(src="https://graph.facebook.com/#{comment.from.id}/picture")
+              strong= comment.from.name
+              |  
+              = timestamp(comment.created_time)
+              br
+              = comment.message
+        else
+          em none

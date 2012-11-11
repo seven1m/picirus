@@ -35,7 +35,8 @@
     "node-syntaxhighlighter": "0.8.x",
     "moment": "1.7.x",
     "paginator": "git://github.com/seven1m/paginator.git",
-    "flickr-with-uploads":"0.2.x"
+    "flickr-with-uploads": "0.2.x",
+    "express-partials": "0.0.6"
   },
   "devDependencies": {
     "jasmine-node": "*",

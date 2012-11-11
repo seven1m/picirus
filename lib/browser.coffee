@@ -4,6 +4,8 @@ async = require('async')
 mime = require('mime')
 syntax = require('node-syntaxhighlighter')
 
+File = require('./file')
+
 cmpFilesName = (a, b) =>
   na = a.name.toLowerCase()
   nb = b.name.toLowerCase()
@@ -38,6 +40,8 @@ cmpFilesSize = (a, b) =>
   else 0
 
 META_PATTERN = /\.meta\.json$/
+EXTENDED_VIEWS =
+  facebook: ['plugins/facebook/comments']
 
 class Browser
 
@@ -107,6 +111,10 @@ class Browser
       stat.name = name
       callback null, stat
 
+  meta: (cb) =>
+    file = new File(@account, @snapshot, @path, false)
+    file.getMeta(cb)
+
   snapshots: (cb) =>
     fs.readdir @rootPath(), (err, list) =>
       list.sort() if list
@@ -135,5 +143,8 @@ class Browser
 
   mime: =>
     mime.lookup(@name)
+
+  extendedViews: =>
+    EXTENDED_VIEWS[@account.provider]
 
 module.exports = Browser

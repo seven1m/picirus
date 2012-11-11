@@ -87,16 +87,17 @@ class FacebookBackup extends PluginBackup
           metaPath = "photos/#{data.object_id}.meta.json"
           uri = url.parse(res.source)
           req = https.request host: uri.host, port: uri.port, path: uri.path, (res) =>
-            file = new File @account, @snapshot, path, false, res, rev: data.updated_time, updated: data.updated_time
+            data.rev = data.updated_time
+            data.updated = data.updated_time
+            delete data.updated_time
+            file = new File @account, @snapshot, path, false, res, data
             file.save (err) =>
               if err
                 console.log "#{path} - error - #{err}"
               else
                 @incCount('added') if file.added
                 @incCount('updated') if file.updated
-                console.log "#{path} - saved, now saving meta data..."
-                metaFile = new File @account, @snapshot, metaPath, false, JSON.stringify(data), rev: data.updated_time, updated: data.updated_time
-                metaFile.save()
+                console.log "#{path} - saved"
               req.destroy() # FIXME this doesn't seem right, but the timeout fires if we don't destroy the req
               cb(err)
           req.setTimeout 10000, =>

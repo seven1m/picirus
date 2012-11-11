@@ -1,5 +1,6 @@
 fs = require('fs')
 express = require('express')
+partials = require('express-partials')
 http = require('http')
 path = require('path')
 passport = require('passport')

@@ -1,5 +1,7 @@
 _ = require('underscore')
+fs = require('fs')
 moment = require('moment')
+jade = require('jade')
 
 alertIconClass = (cls) ->
   switch cls
@@ -19,8 +21,11 @@ fileClass = (file) ->
     'icon-file'
 
 timestamp = (time) ->
-  if time and time.getFullYear() > 1969
-    moment(time).format('YYYY-MM-DD hh:mm:ss a')
+  if time
+    if 'string' == typeof time
+      time = moment(time).toDate()
+    if time.getFullYear() > 1969
+      moment(time).format('YYYY-MM-DD hh:mm:ss a')
 
 prettySize = (bytes) ->
   kbytes = bytes / 1024
@@ -46,4 +51,12 @@ module.exports = (req, res, next) ->
   res.locals.fileClass = fileClass
   res.locals.timestamp = timestamp
   res.locals.prettySize = prettySize
+  res.locals._ = _
+  res.locals.partial = (p, data) =>
+    fn = jade.compile(fs.readFileSync(__dirname + '/../views/' + p + '.jade'))
+    # FIXME redundant
+    data ?= {}
+    data._ = _
+    data.timestamp = timestamp
+    fn(data)
   next()
