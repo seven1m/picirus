@@ -4,7 +4,7 @@ async = require('async')
 mime = require('mime')
 syntax = require('node-syntaxhighlighter')
 
-cmpFiles = (a, b) =>
+cmpFilesName = (a, b) =>
   na = a.name.toLowerCase()
   nb = b.name.toLowerCase()
   da = a.isDirectory()
@@ -13,6 +13,28 @@ cmpFiles = (a, b) =>
   else if db and not da then 1
   else if na < nb then -1      # lowercase alphabetically
   else if na > nb then 1
+  else 0
+
+cmpFilesModified = (a, b) =>
+  ma = a.mtime
+  mb = b.mtime
+  da = a.isDirectory()
+  db = b.isDirectory()
+  if da and not db then -1     # directories on top
+  else if db and not da then 1
+  else if ma < mb then -1      # modified time
+  else if ma > mb then 1
+  else 0
+
+cmpFilesSize = (a, b) =>
+  sa = a.size
+  sb = b.size
+  da = a.isDirectory()
+  db = b.isDirectory()
+  if da and not db then -1     # directories on top
+  else if db and not da then 1
+  else if sa < sb then -1      # file size
+  else if sa > sb then 1
   else 0
 
 class Browser
@@ -38,12 +60,18 @@ class Browser
   rootPath: =>
     CONFIG.path('account', @account)
 
-  list: (cb) =>
+  list: (sort, cb) =>
     if @snapshot
       fs.readdir @fullPath(), (err, list) =>
         if err then return cb(err)
         async.map list, @statChild, (err, list) =>
-          if list then list.sort cmpFiles
+          if list
+            if sort == 'name'
+              list.sort cmpFilesName
+            else if sort == 'modified'
+              list.sort cmpFilesModified
+            else if sort == 'size'
+              list.sort cmpFilesSize
           cb(err, list)
     else
       @latestSnapshot (err, snapshot) =>

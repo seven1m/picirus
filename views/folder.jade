@@ -21,9 +21,21 @@ block main
         table.table
           thead
             tr
-              th name
-              th modified
-              th size
+              th
+                a(href="?sort=name") name
+                if sort == 'name'
+                  |  
+                  i.icon-caret-up
+              th
+                a(href="?sort=modified") modified
+                if sort == 'modified'
+                  |  
+                  i.icon-caret-up
+              th
+                a(href="?sort=size") size
+                if sort == 'size'
+                  |  
+                  i.icon-caret-up
           tbody
             for file in files
               tr

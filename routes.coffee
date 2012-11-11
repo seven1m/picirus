@@ -90,11 +90,12 @@ module.exports = (app) ->
             else
               if stat.isDirectory()
                 browser.snapshots (err, snapshots) =>
-                  browser.list (err, files) =>
+                  sort = req.query.sort || 'name'
+                  browser.list sort, (err, files) =>
                     if err
                       res.render 'error', error: err
                     else
-                      res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots
+                      res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots, sort: sort
               else
                 if req.query.raw
                   res.sendfile stat.fs_path
