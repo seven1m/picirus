@@ -1,0 +1,10 @@
+extend ../layout
+block main
+  h1.title=title
+  img(src=image)
+  if description && description._content
+    h2 Description
+    p.description= description._content
+  if tags
+    h2 Tags
+    p.tags= tags
