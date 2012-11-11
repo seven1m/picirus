@@ -1,5 +1,6 @@
 # abstract file/directory
 
+_ = require('underscore')
 Stream = require('stream').Stream
 fs = require('fs')
 path = require('path')
@@ -29,6 +30,7 @@ class File
         mkdirp name, cb
 
   save: (cb) =>
+    cb ?= _.identity
     @data.pause() if @data instanceof Stream
     @mkdir (err) =>
       if err then cb(err)
@@ -63,6 +65,7 @@ class File
 
 
   saveMeta: (cb) =>
+    cb ?= _.identity
     for key, val of @meta
       xattr.set @fullPath(), "user.#{key}", val
     if @meta.updated

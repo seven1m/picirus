@@ -37,6 +37,8 @@ cmpFilesSize = (a, b) =>
   else if sa > sb then 1
   else 0
 
+META_PATTERN = /\.meta\.json$/
+
 class Browser
 
   constructor: (@account, @snapshot, @path='') ->
@@ -64,6 +66,7 @@ class Browser
     if @snapshot
       fs.readdir @fullPath(), (err, list) =>
         if err then return cb(err)
+        list = (i for i in list when not i.match(META_PATTERN))
         async.map list, @statChild, (err, list) =>
           if list
             if sort == 'name'
