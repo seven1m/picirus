@@ -13,6 +13,7 @@ models = require('./models')
 plugins = require('./plugins')
 
 sequelize.sync()
+sequelize.query("update accounts set status='idle';")
 
 app = express()
 server = http.createServer(app)
