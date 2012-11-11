@@ -81,7 +81,7 @@ class FacebookBackup extends PluginBackup
           path = "photos/#{data.object_id}.jpg"
           uri = url.parse(res.source)
           req = https.request host: uri.host, port: uri.port, path: uri.path, (res) =>
-            file = new File @account, @snapshot, path, false, res, rev: data.updated_time
+            file = new File @account, @snapshot, path, false, res, rev: data.updated_time, updated: data.updated_time
             file.save (err) =>
               if err
                 console.log "#{path} - error - #{err}"

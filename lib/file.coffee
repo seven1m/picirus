@@ -6,6 +6,7 @@ path = require('path')
 xattr = require('xattr')
 mkdirp = require('mkdirp')
 rimraf = require('rimraf')
+moment = require('moment')
 
 class File
 
@@ -64,7 +65,11 @@ class File
   saveMeta: (cb) =>
     for key, val of @meta
       xattr.set @fullPath(), "user.#{key}", val
-    cb(null)
+    if @meta.updated
+      fs.utimes @fullPath(), new Date(), moment(@meta.updated).toDate(), =>
+        cb(null)
+    else
+      cb(null)
 
   getMeta: (cb) =>
     meta = {}
