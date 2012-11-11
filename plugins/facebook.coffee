@@ -28,7 +28,12 @@ class FacebookPlugin extends BasePlugin
   )
 
   build: (accessToken, refreshToken, profile, done) =>
-    models.account.buildFromOAuth2 profile, accessToken, refreshToken, done
+    models.account.buildFromOAuth2 profile, accessToken, refreshToken, (err, account) =>
+      if err
+        done(err)
+      else
+        @backup(account)
+        done(null, account)
 
   backup: (account, cb) =>
     new FacebookBackup(account).run(cb)
