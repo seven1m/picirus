@@ -1,6 +1,7 @@
 /* color palette: "safeword" (http://www.colourlovers.com/palette/299662/safeword) by jimmyjames
    #930    = red/orange
    #2FA4E7 = blue
+   #009898 = turqouis brand/logo
 */
 
 body {
@@ -26,7 +27,7 @@ nav .brand img {
 }
 
 nav .brand a {
-  color: #2FA4E7;
+  color: #009898;
 }
 
 #main {
