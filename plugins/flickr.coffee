@@ -79,6 +79,7 @@ class FlickrBackup extends PluginBackup
 
         image = new File @account, @snapshot, photo.path, false, res,
           title: photo.title
+          description: photo.description._content
           tags: photo.tags
 
         image.save (err) =>
@@ -88,24 +89,11 @@ class FlickrBackup extends PluginBackup
               console.log "#{photo.path} - saved"
               @incCount('added') if image.added
               @incCount('updated') if image.updated
-            
-            jade.renderFile __dirname + '/../views/plugins/flickr/image.jade', photo, (err, view) =>
-              if err || !view
-                @symlink photo
-              else
-                html_path = photo.path.replace('.jpg', '.html')
-                html = new File @account, @snapshot, html_path, false, view
+              @symlink photo
 
-                html.save (err) =>
-                  if err
-                    console.log "#{html_path} - error - #{err}"
-                    @symlink photo
-                  else
-                    console.log "#{html_path} - saved"
-                    @symlink photo, html_path
           cb(err)          
 
-  symlink: (photo, html_path) =>
+  symlink: (photo) =>
     _write = (path, newPath) =>
       symlink = new Symlink @account, @snapshot, path, newPath
       symlink.save (err) =>
@@ -118,8 +106,6 @@ class FlickrBackup extends PluginBackup
       tags = photo.tags.split ' '
       for tag in tags
         _write photo.path, photo.path.replace(/^photos/, "tags/#{tag}")
-        if html_path        
-          _write photo.path, html_path.replace(/^photos/, "tags/#{tag}")
 
 module.exports = FlickrPlugin
 FlickrPlugin.FlickrBackup = FlickrBackup
