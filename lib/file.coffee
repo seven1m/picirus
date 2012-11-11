@@ -35,7 +35,7 @@ class File
         @saveMeta(cb)
       else
         @getMeta (err, meta) =>
-          if @meta && meta && @meta.rev == meta.rev
+          if @meta?.rev? && meta?.rev? && @meta.rev == meta.rev
             # same file rev
             cb(null)
           else

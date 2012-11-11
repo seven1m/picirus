@@ -1,0 +1,14 @@
+doctype 5
+html
+  head
+    | <style type='text/css'>
+    include ../../public/css/plugin-simple.css
+    | </style>
+    title 
+      if 'undefined' != typeof title
+        =title
+      else
+        Picirus Cloud Backup
+  body
+    div.main
+      block main
