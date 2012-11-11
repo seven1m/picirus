@@ -150,3 +150,7 @@ img.avatar {
   float: left;
   margin: 0 5px 5px 0;
 }
+
+#main section table th {
+  width: 160px;
+}
