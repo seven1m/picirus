@@ -1,7 +1,7 @@
 # abstract file/directory
 _ = require('underscore')
 fs = require('fs')
-path = require('path')
+pathLib = require('path')
 xattr = require('xattr')
 mkdirp = require('mkdirp')
 util = require('util')
@@ -16,12 +16,12 @@ class Symlink extends File
   sourcePath: =>
     if @source_path.match(/\.\./)
       throw 'cannot be a relative path'
-    path.join CONFIG.path('account', @account), @snapshot, @source_path
+    pathLib.join CONFIG.path('account', @account), @snapshot, @source_path
 
   fullPath: =>
     if @path.match(/\.\./)
       throw 'cannot be a relative path'
-    path.join CONFIG.path('account', @account), @snapshot, @path
+    pathLib.join CONFIG.path('account', @account), @snapshot, @path
 
   linkPath: =>
     source_path = @sourcePath().split '/'
@@ -41,7 +41,7 @@ class Symlink extends File
       source_path
 
   mkdir: (cb) =>
-    name = path.dirname(@fullPath())
+    name = pathLib.dirname(@fullPath())
     fs.stat name, (err, stat) =>
       if stat and stat.isFile()
         rimraf name, (err) =>
