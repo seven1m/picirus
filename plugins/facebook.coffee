@@ -15,13 +15,16 @@ models = require('../models')
 class FacebookPlugin extends BasePlugin
 
   routes: (app) ->
+    app.get '/auth/facebook', @config, @auth
+    app.get '/auth/facebook/callback', @auth, @redirect
+
+  config: (req, res, next) =>
     config =
       clientID: CONFIG.keys.facebook.client_id
       clientSecret: CONFIG.keys.facebook.client_secret
-      callbackURL: "http://localhost:3000/auth/facebook/callback"
+      callbackURL: "http://#{req.headers.host}/auth/facebook/callback"
     passport.use 'facebook-authz', new FacebookStrategy(config, @build)
-    app.get '/auth/facebook', @auth
-    app.get '/auth/facebook/callback', @auth, @redirect
+    next()
 
   auth: passport.authorize('facebook-authz',
     scope: ['offline_access', 'user_photos']
