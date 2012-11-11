@@ -63,8 +63,8 @@ $(function() {
         plotBackgroundColor: null,
         plotBorderWidth: null,
         plotShadow: false,
-        spacingLeft: 50,
-        spacingRight: 50
+        spacingLeft: 70,
+        spacingRight: 70
       },
       title: {
         text: 'Storage'
