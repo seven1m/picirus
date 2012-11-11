@@ -73,8 +73,6 @@ class FlickrBackup extends PluginBackup
 
       http.get url, (res) =>
 
-        console.log photo
-        
         path = "photos/#{photo.id}.jpg"
 
         file = new File @account, @snapshot, path, false, res,

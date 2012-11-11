@@ -1,4 +1,5 @@
 # abstract file/directory
+_ = require('underscore')
 fs = require('fs')
 path = require('path')
 xattr = require('xattr')
@@ -22,6 +23,23 @@ class Symlink extends File
       throw 'cannot be a relative path'
     path.join CONFIG.path('account', @account), @snapshot, @path
 
+  linkPath: =>
+    source_path = @sourcePath().split '/'
+    full_path = @fullPath().split '/'
+
+    for path, i in full_path
+      if path != source_path[i]
+        upDir = ''
+        for c in [0...full_path.length - i - 1]
+          upDir += '../'
+        linkPath = _.rest source_path, i      
+        break
+
+    if upDir
+      upDir + linkPath.join('/')
+    else
+      source_path
+
   mkdir: (cb) =>
     name = path.dirname(@fullPath())
     fs.stat name, (err, stat) =>
@@ -38,7 +56,7 @@ class Symlink extends File
 
   _writeFile: (cb) =>
     write = =>
-      link = fs.symlink @sourcePath(), @fullPath()
+      link = fs.symlink @linkPath(), @fullPath()
       cb()
     fs.stat @sourcePath(), (err, stat) =>
       if stat
