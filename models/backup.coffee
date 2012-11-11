@@ -58,8 +58,9 @@ Backup = module.exports = sequelize.define 'backup', schema,
         cb(null, backup)
 
     stats: (cb) ->
-      start = moment().subtract('days', 30)
-      dates = for i in [0..30]
+      days = 10
+      start = moment().subtract('days', days)
+      dates = for i in [0..days]
         start.clone().add('days', i).format('YYYY-MM-DD')
       sequelize.query(
         "select sum(added_count) as added,
