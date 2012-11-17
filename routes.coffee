@@ -21,6 +21,12 @@ module.exports = (app) ->
       req.params.uid = req.params[1]
     models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete cb
 
+  build = (req) ->
+    if req.params.length
+      req.params.provider = req.params[0]
+      req.params.uid = req.params[1]
+    models.account.build(provider: req.params.provider, uid: req.params.uid)
+
   app.get '/', (req, res) ->
     models.item.all(where: {deleted: false}, order: 'updated_at desc', limit: 50).complete (err, items) ->
       if err
@@ -86,40 +92,37 @@ module.exports = (app) ->
   # FIXME this is out of hand - move some of this into Browser
   # FIXME stat is a raw js object - should be using File here
   app.get /\/accounts\/(\w+)\/([^\/]+)\/?(.*)?/, (req, res) ->
-    find req, (err, account) ->
-      if err or not account
-        res.render 'error', error: err || 'account not found'
-      else
-        browser = new Browser(account, req.params[2])
-        if browser.snapshot
-          browser.stat (err, stat) =>
-            browser.meta (err, meta) =>
-              if err
-                res.render 'error', error: err
-              else
-                if stat.isDirectory()
-                  browser.snapshots (err, snapshots) =>
-                    sort = req.query.sort || 'name'
-                    browser.list sort, (err, files) =>
-                      if err
-                        res.render 'error', error: err
-                      else
-                        res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots, sort: sort
-                else
-                  if req.query.raw
-                    res.sendfile stat.fs_path
+    account = build(req)
+    browser = new Browser(account, req.params[2])
+    if browser.snapshot
+      browser.stat (err, stat) =>
+        browser.meta (err, meta) =>
+          if err
+            res.render 'error', error: err
+          else
+            if stat.isDirectory()
+              browser.snapshots (err, snapshots) =>
+                sort = req.query.sort || 'name'
+                browser.list sort, (err, files) =>
+                  if err
+                    res.render 'error', error: err
                   else
-                    if stat.lang
-                      fs.readFile stat.fs_path, (err, body) =>
-                        code = syntax.highlight(body.toString(), stat.lang)
-                        res.render 'file', account: account, browser: browser, file: stat, code: code, meta: meta
-                    else
-                      res.render 'file', account: account, browser: browser, file: stat, code: null, meta: meta
-        else
-          browser.latestSnapshot (err, snapshot) =>
-            if err
-              if err.code == 'ENOENT'
-                err = "This account hasn't yet been backed up, so there aren't any files to see yet."
-              res.render 'error', error: err
+                    res.render 'folder', account: account, browser: browser, files: files, snapshots: snapshots, sort: sort
             else
-              res.redirect "/accounts/#{req.params[0]}/#{req.params[1]}/#{snapshot}"
+              if req.query.raw
+                res.sendfile stat.fs_path
+              else
+                if stat.lang
+                  fs.readFile stat.fs_path, (err, body) =>
+                    code = syntax.highlight(body.toString(), stat.lang)
+                    res.render 'file', account: account, browser: browser, file: stat, code: code, meta: meta
+                else
+                  res.render 'file', account: account, browser: browser, file: stat, code: null, meta: meta
+    else
+      browser.latestSnapshot (err, snapshot) =>
+        if err
+          if err.code == 'ENOENT'
+            err = "This account hasn't yet been backed up, so there aren't any files to see yet."
+          res.render 'error', error: err
+        else
+          res.redirect "/accounts/#{req.params[0]}/#{req.params[1]}/#{snapshot}"
