@@ -36,7 +36,7 @@ app.configure ->
   app.use helpers
   app.use app.router
   app.use (req, res, next) ->
-    if req.url.match(/^\/(css|js|images|font)/)
+    if req.url.match(/^\/(css|js|images|font|woff)/)
       res.setHeader "Cache-Control", "public, max-age=345600"
     next()
   app.use express.static(path.join(__dirname, 'public'))
