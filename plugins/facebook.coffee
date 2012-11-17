@@ -26,7 +26,7 @@ class FacebookPlugin extends BasePlugin
     next()
 
   auth: passport.authorize('facebook-authz',
-    scope: ['offline_access', 'user_photos']
+    scope: ['offline_access', 'user_photos', 'read_stream']
   )
 
   build: (accessToken, refreshToken, profile, done) =>
@@ -47,28 +47,22 @@ class FacebookBackup extends PluginBackup
     super(@account)
     @client = graph
     @client.setAccessToken(@account.token)
-    @until = null
-    @since = null
+    @until = @account.cursor if @account.cursor
 
   backup: (cb) =>
     params = {}
-    if @until
-      params.until = @until
-    else if @account.cursor # FIXME does FB return the first batch 'since', or the last batch 'since'?
-      params.since = @account.cursor
-    @client.get 'me/feed', params, (err, res) =>
+    params.until = @until if @until
+    @client.get 'me/photos/uploaded', params, (err, res) =>
       if err
         cb(err)
       else
-        # FIXME I think some pages will have zero data length, but we should still query for the next page
         if res.data and res.data.length > 0
           async.forEachSeries res.data, @save, (err) =>
             if err
               cb(err)
             else
-              if not @since
-                @since = @_findParam(res.paging?.previous, 'since')
-              if @until = @_findParam(res.paging?.next, 'until')
+              if (@until = @_findParam(res.paging?.next, 'until')) and (not @account.cursor or parseInt(@until) > parseInt(@account.cursor))
+                @account.cursor = @until if parseInt(@until) > parseInt(@account.cursor)
                 process.nextTick => @backup(cb)
               else
                 @finish(cb)
@@ -76,44 +70,40 @@ class FacebookBackup extends PluginBackup
           @finish(cb)
 
   save: (data, cb) =>
-    if data.type == 'photo'
-      @client.get data.object_id, (err, res) =>
-        if err
-          if err.code == 100 # just a bad image, skip it
-            cb()
-          else
-            cb(err)
+    @client.get data.id, (err, res) =>
+      if err
+        if err.code == 100 # just a bad image, skip it
+          cb()
         else
-          console.log "retrieving #{data.object_id}..."
-          path = "photos/#{data.object_id}.jpg"
-          metaPath = "photos/#{data.object_id}.meta.json"
-          uri = url.parse(res.source)
-          req = https.request host: uri.host, port: uri.port, path: uri.path, (res) =>
-            data.rev = data.updated_time
-            data.updated = data.updated_time
-            delete data.updated_time
-            file = @newFile
-              path: path
-              data: res
-              meta: data
-            file.save (err) =>
-              req.destroy() # FIXME this doesn't seem right, but the timeout fires if we don't destroy the req
-              cb(err)
-          req.setTimeout 10000, =>
-            data.fail_count ?= 0
-            console.log "timeout trying to retrieve Facebook photo (#{data.fail_count} failures): #{path}"
-            req.destroy()
-            if data.fail_count < 5
-              data.fail_count++
-              @save(data, cb)
-            else
-              cb("timeout trying to retreive photo #{path}")
-          req.end()
-    else
-      cb()
+          cb(err)
+      else
+        console.log "retrieving #{data.id}..."
+        path = "photos/#{data.id}.jpg"
+        metaPath = "photos/#{data.id}.meta.json"
+        uri = url.parse(res.source)
+        req = https.request host: uri.host, port: uri.port, path: uri.path, (res) =>
+          data.rev = data.updated_time
+          data.updated = data.updated_time
+          delete data.updated_time
+          file = @newFile
+            path: path
+            data: res
+            meta: data
+          file.save (err) =>
+            req.destroy() # FIXME this doesn't seem right, but the timeout fires if we don't destroy the req
+            cb(err)
+        req.setTimeout 10000, =>
+          data.fail_count ?= 0
+          console.log "timeout trying to retrieve Facebook photo (#{data.fail_count} failures): #{path}"
+          req.destroy()
+          if data.fail_count < 5
+            data.fail_count++
+            @save(data, cb)
+          else
+            cb("timeout trying to retreive photo #{path}")
+        req.end()
 
   finish: (cb) =>
-    @account.cursor = @since
     @account.save().complete(cb)
 
   _findParam: (url, name) =>
