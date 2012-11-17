@@ -115,7 +115,7 @@ class Browser
   meta: (cb) =>
     file = new File
       account: @account
-      snaphost: @snapshot
+      snapshot: @snapshot
       path: @path
     file.getMeta(cb)
 

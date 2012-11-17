@@ -9,7 +9,6 @@ url = require('url')
 base = require('./base')
 BasePlugin = base.BasePlugin
 PluginBackup = base.PluginBackup
-File = require('../lib/file')
 models = require('../models')
 
 class FacebookPlugin extends BasePlugin
@@ -93,14 +92,11 @@ class FacebookBackup extends PluginBackup
             data.rev = data.updated_time
             data.updated = data.updated_time
             delete data.updated_time
-            file = new File @account, @snapshot, path, false, res, data
+            file = @newFile
+              path: path
+              data: res
+              meta: data
             file.save (err) =>
-              if err
-                console.log "#{path} - error - #{err}"
-              else
-                @incCount('added') if file.added
-                @incCount('updated') if file.updated
-                console.log "#{path} - saved"
               req.destroy() # FIXME this doesn't seem right, but the timeout fires if we don't destroy the req
               cb(err)
           req.setTimeout 10000, =>

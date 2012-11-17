@@ -50,6 +50,7 @@ class File
           else
             @findItem (err, item) =>
               item.snapshot = @snapshot
+              item.backup_id = @backup.id if @backup
               item.deleted = false
               item.save()
             @_writeFile(cb)
@@ -108,6 +109,7 @@ class File
     @findItem 'existing', (err, item) =>
       if item
         item.snapshot = @snapshot
+        item.backup_id = @backup.id if @backup
         item.deleted = true
         item.save()
     rimraf @fullPath(), cb
@@ -121,7 +123,6 @@ class File
       onlyIfExisting = null
     attrs =
       account_id: @account.id
-      backup_id: @backup.id
       provider: @account.provider
       uid: @account.uid
       path: @path
