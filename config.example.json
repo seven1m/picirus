@@ -1,0 +1,26 @@
+{
+  "keys": {
+    "dropbox": {
+      "key": "",
+      "secret": ""
+    },
+    "flickr": {
+      "key": "",
+      "secret": ""
+    },
+    "facebook": {
+      "client_id": "",
+      "client_secret": ""
+    },
+  },
+  "options" : {
+    "flickr": {
+      "static_url" : "http://farm{:farm}.staticflickr.com/{:server}/{:id}_{:secret}.jpg"
+    }
+  },
+  "paths": {
+    "backup_root": "backup",
+    "account": "$backup_root/:provider-:uid",
+    "database": "data.sqlite3"
+  }
+}
