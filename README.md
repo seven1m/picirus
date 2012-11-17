@@ -21,6 +21,15 @@ npm install
 
 Watch for errors here, particularly when sqlite3 is installed. You may need to install sqlite header files on your OS.
 
+Now, set up the config:
+
+```bash
+cp config.example.json config.json
+vi config.json
+```
+
+Input your API keys in the `config.json` file and save. (You'll need to create an app for each one online and copy-paste the keys and secrets.)
+
 Then start the app with:
 
 ```bash
