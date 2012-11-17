@@ -27,3 +27,5 @@ class GooglePlugin extends BasePlugin
     models.account.buildFromOAuth2 profile, accessToken, refreshToken, done
 
 module.exports = GooglePlugin
+
+GooglePlugin.disabled = true
