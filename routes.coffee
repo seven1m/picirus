@@ -1,12 +1,7 @@
 ACCOUNT_TYPES =
   dropbox: 'Dropbox'
   flickr: 'Flickr'
-  google: 'Gmail'
   facebook: 'Facebook'
-  imap: 'IMAP'
-  pop3: 'POP3'
-  ftp: 'FTP'
-  scp: 'SCP'
 
 fs = require('fs')
 syntax = require('node-syntaxhighlighter')
@@ -88,6 +83,8 @@ module.exports = (app) ->
       else
         res.render 'remove_account', account: account
 
+  # FIXME this is out of hand - move some of this into Browser
+  # FIXME stat is a raw js object - should be using File here
   app.get /\/accounts\/(\w+)\/([^\/]+)\/?(.*)?/, (req, res) ->
     find req, (err, account) ->
       if err or not account
