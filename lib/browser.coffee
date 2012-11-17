@@ -9,11 +9,21 @@ File = require('./file')
 cmpFilesName = (a, b) =>
   na = a.name.toLowerCase()
   nb = b.name.toLowerCase()
+  ba = a.name.split('.')[0]
+  bb = b.name.split('.')[0]
+  console.log(ba,bb)
   da = a.isDirectory()
   db = b.isDirectory()
-  if da and not db then -1     # directories on top
+  # directories on top
+  if da and not db then -1
   else if db and not da then 1
-  else if na < nb then -1      # lowercase alphabetically
+  # numerically
+  else if ba.match(/^\d+$/) and bb.match(/^\d+$/)
+    if parseInt(ba) < parseInt(bb) then -1
+    else if parseInt(ba) > parseInt(bb) then 1
+    else 0
+  # lowercase alphabetically
+  else if na < nb then -1
   else if na > nb then 1
   else 0
 
