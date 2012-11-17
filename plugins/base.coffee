@@ -1,5 +1,7 @@
+_ = require('underscore')
 models = require('../models')
 rotations = require('../lib/rotations')
+File = require('../lib/file')
 
 class exports.BasePlugin
 
@@ -31,5 +33,8 @@ class exports.PluginBackup
                 else
                   backup.finish(cb)
 
-  incCount: (which) =>
-    @_backup["#{which}_count"]++
+  newFile: (options) =>
+    new File _.defaults options,
+      account: @account
+      backup: @_backup
+      snapshot: @snapshot

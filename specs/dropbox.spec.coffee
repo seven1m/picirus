@@ -4,6 +4,7 @@ mkdirp = require('mkdirp')
 rimraf = require('rimraf')
 
 require('./spec_helper')
+File = require('../lib/file')
 Account = require('../models/account')
 DropboxBackup = require('../plugins/dropbox').DropboxBackup
 
@@ -38,25 +39,27 @@ describe 'DropboxBackup', ->
       beforeEach ->
         fs.writeFileSync(path.join(root, 'baz'), 'file contents')
 
-      it 'calls the callback with the filename', ->
+      it 'calls the callback with the file', ->
         cb = jasmine.createSpy('cb')
         runs ->
           backup.findFile 'foo/baz', cb
         waitsFor (-> cb.callCount > 0), '_findFile', 1000
         runs ->
           expect(cb.mostRecentCall.args[0]).toBeNull()
-          expect(cb.mostRecentCall.args[1]).toEqual('baz')
+          expect(cb.mostRecentCall.args[1] instanceof File).toBeTruthy('not instance of File')
+          expect(cb.mostRecentCall.args[1].path).toEqual('baz')
 
     describe 'given "BAZ" file is present', ->
 
       beforeEach ->
         fs.writeFileSync(path.join(root, 'BAZ'), 'file contents')
 
-      it 'calls the callback with the filename', ->
+      it 'calls the callback with the file', ->
         cb = jasmine.createSpy('cb')
         runs ->
           backup.findFile 'foo/baz', cb
         waitsFor (-> cb.callCount > 0), '_findFile', 1000
         runs ->
           expect(cb.mostRecentCall.args[0]).toBeNull()
-          expect(cb.mostRecentCall.args[1]).toEqual('BAZ')
+          expect(cb.mostRecentCall.args[1] instanceof File).toBeTruthy()
+          expect(cb.mostRecentCall.args[1].path).toEqual('BAZ')

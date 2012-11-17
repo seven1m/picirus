@@ -1,16 +1,20 @@
 # abstract file/directory
 
 _ = require('underscore')
-Stream = require('stream').Stream
 fs = require('fs')
 path = require('path')
 mkdirp = require('mkdirp')
 rimraf = require('rimraf')
 moment = require('moment')
 
+Stream = require('stream').Stream
+Item = require('../models/item')
+
 class File
 
-  constructor: (@account, @snapshot, @path, @isDir, @data, @meta) ->
+  constructor: (options) ->
+    for key, val of options
+      @[key] = val
 
   fullPath: =>
     if @path.match(/\.\./)
@@ -21,14 +25,14 @@ class File
     @fullPath() + '.meta.json'
 
   mkdir: (cb) =>
-    name = if @isDir then @fullPath() else path.dirname(@fullPath())
+    name = if @is_dir then @fullPath() else path.dirname(@fullPath())
     fs.stat name, (err, stat) =>
       if stat and stat.isFile()
         rimraf name, (err) =>
-          @added = true if @isDir
+          @added = true if @is_dir
           mkdirp name, cb
       else
-        @added = true if @isDir
+        @added = true if @is_dir
         mkdirp name, cb
 
   save: (cb) =>
@@ -36,7 +40,7 @@ class File
     @data.pause() if @data instanceof Stream
     @mkdir (err) =>
       if err then cb(err)
-      if @isDir
+      if @is_dir
         @saveMeta(cb)
       else
         @getMeta (err, meta) =>
@@ -44,6 +48,10 @@ class File
             # same file rev
             cb(null)
           else
+            @findItem (err, item) =>
+              item.snapshot = @snapshot
+              item.deleted = false
+              item.save()
             @_writeFile(cb)
 
   _writeFile: (cb) =>
@@ -58,11 +66,15 @@ class File
         @saveMeta(cb)
     fs.stat @fullPath(), (err, stat) =>
       if stat
-        @updated = true
+        console.log "#{@path} - updated"
+        if @backup
+          @backup.updated_count++
         rimraf @fullPath(), (err) =>
           write()
       else
-        @added = true
+        console.log "#{@path} - created"
+        if @backup
+          @backup.added_count++
         write()
 
 
@@ -90,9 +102,32 @@ class File
         cb null
 
   delete: (cb) =>
+    console.log "#{@path} - removing"
+    if @backup
+      @backup.deleted_count++
+    @findItem 'existing', (err, item) =>
+      if item
+        item.snapshot = @snapshot
+        item.deleted = true
+        item.save()
     rimraf @fullPath(), cb
 
   exists: (cb) =>
     fs.exists @fullPath(), cb
+
+  findItem: (onlyIfExisting, cb) =>
+    unless cb
+      cb = onlyIfExisting
+      onlyIfExisting = null
+    attrs =
+      account_id: @account.id
+      backup_id: @backup.id
+      provider: @account.provider
+      uid: @account.uid
+      path: @path
+    if onlyIfExisting
+      Item.find(where: attrs).complete(cb)
+    else
+      Item.findOrInitialize attrs, cb
 
 module.exports = File

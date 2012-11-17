@@ -113,7 +113,10 @@ class Browser
       callback null, stat
 
   meta: (cb) =>
-    file = new File(@account, @snapshot, @path, false)
+    file = new File
+      account: @account
+      snaphost: @snapshot
+      path: @path
     file.getMeta(cb)
 
   snapshots: (cb) =>

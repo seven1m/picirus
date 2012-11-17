@@ -9,7 +9,6 @@ DropboxClient = require('dropbox-node').DropboxClient
 base = require('./base')
 BasePlugin = base.BasePlugin
 PluginBackup = base.PluginBackup
-File = require('../lib/file')
 models = require('../models')
 
 class DropboxPlugin extends BasePlugin
@@ -64,28 +63,16 @@ class DropboxBackup extends PluginBackup
     meta = path[1]
     path = path[0]
     if meta
-      stream = !meta.is_dir && @client.getFile(path)
-      file = new File @account, @snapshot, meta.path, meta.is_dir, stream,
-        rev: meta.rev
-      file.save (err) =>
-        if err
-          console.log "#{path} - error - #{err}"
-        else
-          console.log "#{path} - saved"
-          @incCount('added') if file.added
-          @incCount('updated') if file.updated
-        cb(err)
+      file = @newFile
+        path: meta.path
+        is_dir: meta.is_dir
+        data: !meta.is_dir && @client.getFile(path)
+        meta:
+          rev: meta.rev
+      file.save(cb)
     else
-      @findFile path, (err, actual) =>
-        console.log "#{path} - removing"
-        if actual
-          file = new File @account, @snapshot, actual
-          @rotation.remove file.fullPath(), (err) =>
-            @incCount('deleted') unless err
-            cb(err)
-        else
-          @incCount('deleted')
-          cb()
+      @findFile path, (err, file) =>
+        file.delete(cb) if file
 
   # cannot remove file when the case is mixed (not lowercase)
   # so we have to find the file first :(
@@ -96,7 +83,7 @@ class DropboxBackup extends PluginBackup
       if err then return cb(err)
       for file in list
         if file.toLowerCase() == name.toLowerCase()
-          return cb(null, file)
+          return cb(null, @newFile(path: file))
       cb('not found')
 
 

@@ -18,7 +18,10 @@ describe 'File', ->
       provider: 'dropbox'
       uid: '1234'
 
-    file = new File(account, '2012-10-31', 'foo/bar')
+    file = new File
+      account: account
+      snapshot: '2012-10-31'
+      path: 'foo/bar'
 
   describe '#fullPath', ->
     it 'returns the full path on the filesystem', ->
@@ -27,7 +30,10 @@ describe 'File', ->
   describe '#mkdir', ->
     describe 'given a regular file', ->
       beforeEach ->
-        file = new File(account, '2012-10-31', 'foo/bar')
+        file = new File
+          account: account
+          snapshot: '2012-10-31'
+          path: 'foo/bar'
 
       it 'creates the parent directory for the file', ->
         done = false
@@ -41,7 +47,11 @@ describe 'File', ->
 
     describe 'given a directory', ->
       beforeEach ->
-        file = new File(account, '2012-10-31', 'foo/baz', true)
+        file = new File
+          account: account
+          snapshot: '2012-10-31'
+          path: 'foo/baz'
+          is_dir: true
 
       it 'creates the directory', ->
         done = false
@@ -58,7 +68,11 @@ describe 'File', ->
 
     describe 'given @isDir', ->
       beforeEach ->
-        file = new File(account, '2012-10-31', 'foo/bar', true)
+        file = new File
+          account: account
+          snapshot: '2012-10-31'
+          path: 'foo/bar'
+          is_dir: true
 
       describe 'given an existing file of the same name', ->
         beforeEach ->
@@ -75,7 +89,12 @@ describe 'File', ->
 
     describe 'given string data', ->
       beforeEach ->
-        file = new File(account, '2012-10-31', 'foo/bar', false, 'file contents')
+        file = new File
+          account: account
+          snapshot: '2012-10-31'
+          path: 'foo/bar'
+          is_dir: false
+          data: 'file contents'
 
       it 'writes the file', ->
         args = null
@@ -93,7 +112,12 @@ describe 'File', ->
         stream = new Stream()
         stream.pause = ->
         stream.resume = -> this.emit 'resume'
-        file = new File(account, '2012-10-31', 'foo/bar', false, stream)
+        file = new File
+          account: account
+          snapshot: '2012-10-31'
+          path: 'foo/bar'
+          is_dir: false
+          data: stream
 
       it 'writes the file', ->
         args = null
@@ -113,8 +137,14 @@ describe 'File', ->
         mkdirp.sync(path.dirname(filename))
         fs.writeFileSync(filename, 'old contents')
         fs.writeFileSync(filename + '.meta.json', '{"rev":"12345"}')
-        file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
-          rev: '12345'
+        file = new File
+          account: account
+          snapshost: '2012-10-31'
+          path: 'foo/bar'
+          is_dir: false
+          data: 'file contents'
+          meta:
+            rev: '12345'
 
       it 'does not overwrite the file', ->
         cb = jasmine.createSpy('cb')
@@ -127,7 +157,12 @@ describe 'File', ->
     describe 'given an existing directory of the same name', ->
       beforeEach ->
         mkdirp.sync(filename)
-        file = new File account, '2012-10-31', 'foo/bar', false, 'file contents'
+        file = new File
+          account: account
+          snapshot: '2012-10-31'
+          path: 'foo/bar'
+          is_dir: false
+          data: 'file contents'
 
       it 'deletes the existing directory and writes the file', ->
         cb = jasmine.createSpy('cb')
@@ -143,9 +178,15 @@ describe 'File', ->
     beforeEach ->
       mkdirp.sync(path.dirname(filename))
       fs.writeFileSync(filename, 'foo')
-      file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
-        url: 'http://example.com/foo/bar'
-        rev: '1234'
+      file = new File
+        account: account
+        snapshot: '2012-10-31'
+        path: 'foo/bar'
+        is_dir: false
+        data: 'file contents'
+        meta:
+          url: 'http://example.com/foo/bar'
+          rev: '1234'
 
     it 'writes meta to meta.json', ->
       list = null
@@ -162,7 +203,12 @@ describe 'File', ->
     filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
 
     beforeEach ->
-      file = new File account, '2012-10-31', 'foo/bar', false, 'file contents'
+      file = new File
+        account: account
+        snapshot: '2012-10-31'
+        path: 'foo/bar'
+        is_dir: false
+        data: 'file contents'
 
     describe 'given the file does not exist on the filesystem', ->
 
@@ -194,9 +240,15 @@ describe 'File', ->
     filename = __dirname + '/../test-data/dropbox-1234/2012-10-31/foo/bar'
 
     beforeEach ->
-      file = new File account, '2012-10-31', 'foo/bar', false, 'file contents',
-        url: 'http://example.com/foo/bar'
-        rev: '1234'
+      file = new File
+        account: account
+        snapshot: '2012-10-31'
+        path: 'foo/bar'
+        is_dir: false
+        data: 'file contents'
+        meta:
+          url: 'http://example.com/foo/bar'
+          rev: '1234'
       done = false
       runs ->
         file.save -> done = true
