@@ -24,14 +24,14 @@ Watch for errors here, particularly when sqlite3 is installed. You may need to i
 Then start the app with:
 
 ```bash
-node app.coffee
+coffee app.coffee
 ```
 
 To make development easier, install and use supervisor instead:
 
 ```bash
 sudo npm install -g supervisor
-supervisor app.coffee
+supervisor -i backup,node_modules app.coffee
 ```
 
 ## Testing
