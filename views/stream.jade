@@ -1,0 +1,38 @@
+extend layout
+
+block main
+
+  .row
+    .span12
+      article
+        header
+          h2
+            i.icon-play-circle
+            | Combined Stream
+        section
+          for item, i in items
+            .item(class=(i % 2 == 0 ? 'even' : 'odd'))
+              if item.image()
+                a(href=item.url())
+                  img(src=item.url('raw'))
+              a(href=item.url())
+                h3
+                  = item.provider
+                  = item.path
+              table
+                tr
+                  th account
+                  td
+                    = item.provider
+                    | /
+                    = item.uid
+                tr
+                  th created
+                  td= timestamp(item.created_at)
+                if item.updated_at > item.created_at
+                  tr
+                    th updated
+                    td= timestamp(item.updated_at)
+                tr
+                  th type
+                  td= item.mime()

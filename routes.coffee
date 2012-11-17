@@ -27,10 +27,17 @@ module.exports = (app) ->
     models.account.find(where: {provider: req.params.provider, uid: req.params.uid}).complete cb
 
   app.get '/', (req, res) ->
+    models.item.all(where: {deleted: false}, order: 'updated_at desc', limit: 50).complete (err, items) ->
+      if err
+        res.render 'error', error: err
+      else
+        res.render 'stream', items: items
+
+  app.get '/stats', (req, res) ->
     models.backup.count().complete (err, count) ->
       paginator = new Paginator perPage: 10, page: req.query.page, count: count
       models.backup.all(order: 'started desc', offset: paginator.skip, limit: paginator.limit).complete (err, backups) ->
-        res.render 'dashboard', backups: backups, paginator: paginator
+        res.render 'stats', backups: backups, paginator: paginator
 
   app.get '/stats/backups', (req, res) ->
     models.backup.stats (err, stats) ->
@@ -43,12 +50,12 @@ module.exports = (app) ->
   app.get '/accounts', (req, res) ->
     models.account.all().complete (err, accounts) ->
       if err
-        res.render 'error', error: "could not load accounts: #{e}"
+        res.render 'error', error: "could not load accounts: #{err}"
       else
         res.render 'accounts', accounts: accounts, acct_types: ([p, l] for p, l of ACCOUNT_TYPES)
 
   app.get '/settings', (req, res) ->
-    res.render 'settings_page'
+    res.render 'settings'
   
   app.post '/accounts/:provider/:uid/backup', (req, res) ->
     find req, (err, account) ->

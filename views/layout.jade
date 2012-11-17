@@ -21,8 +21,12 @@ html
           ul.nav
             li(class = path == '' && 'active')
               a(href='/')
-                i.icon-dashboard
-                |  dashboard
+                i.icon-play-circle
+                |  stream
+            li(class = path == 'stats' && 'active')
+              a(href='/stats')
+                i.icon-bar-chart
+                |  stats
             li(class = path == 'accounts' && 'active')
               a(href='/accounts')
                 i.icon-cloud

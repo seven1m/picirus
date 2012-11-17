@@ -54,6 +54,7 @@ article header h2 {
 
 article section {
   margin: 20px;
+  overflow: hidden;
 }
 
 h2 {
@@ -151,6 +152,33 @@ img.avatar {
   margin: 0 5px 5px 0;
 }
 
-#main section table th {
+table.meta th {
   width: 160px;
+}
+
+.item {
+  clear: left;
+  margin: 10px 0;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.item h3 {
+  margin-top: 0;
+}
+
+.item.even {
+  background-color: #eee;
+}
+
+.item img {
+  float: left;
+  width: 200px;
+  border: 1px solid #ccc;
+  margin-right: 25px;
+}
+
+.item table th {
+  text-align: left;
+  padding-right: 15px;
 }
