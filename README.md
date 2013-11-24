@@ -14,7 +14,7 @@ Picirus connects to your accounts in the cloud and makes daily snapshot backups 
 First, install Node.js 0.8.0 or higher. Then:
 
 ```bash
-git clone git@github.com:seven1m/picirus.git
+git clone git://github.com/seven1m/picirus.git
 cd picirus
 npm install
 ```
