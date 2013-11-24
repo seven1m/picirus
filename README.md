@@ -51,9 +51,18 @@ To run the tests/specs:
 npm test
 ```
 
+## Contributors
+
+This project was born at [Startup Weekend Tulsa](http://tulsa.startupweekend.org) 2012.
+
+* [Tim Morgan](http://timmorgan.org)
+* [Brandon Westcott](https://github.com/brandonwestcott)
+* [Nathan Phelps](https://github.com/nwp)
+* [Saif Khan](http://www.lifeasadesigner.com) - logo design
+
 ## Copyright & License
 
-Copyright 2013, Tim Morgan.
+Copyright 2013, Tim Morgan and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
